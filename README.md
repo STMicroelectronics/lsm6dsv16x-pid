@@ -1,6 +1,6 @@
 # 1 - Introduction
 
-Sensor driver for LSM6DSV16BX sensor written in C programming language. This repository contains the sensor driver files (.h and .c) to be included, or linked directly as a git submodule, in your project. The driver is MISRA compliant and the documentation can be generated using the [Doxygen](http://www.doxygen.org/) tool.
+Sensor driver for LSM6DSV16X sensor written in C programming language. This repository contains the sensor driver files (.h and .c) to be included, or linked directly as a git submodule, in your project. The driver is MISRA compliant and the documentation can be generated using the [Doxygen](http://www.doxygen.org/) tool.
 
 In order to `clone` the complete content of the repository folder, use the command:
 
