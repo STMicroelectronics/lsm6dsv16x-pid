@@ -3974,6 +3974,16 @@ int32_t lsm6dsv16x_data_ready_mode_set(stmdev_ctx_t *ctx,
 int32_t lsm6dsv16x_data_ready_mode_get(stmdev_ctx_t *ctx,
                                        lsm6dsv16x_data_ready_mode_t *val);
 
+typedef struct
+{
+  uint8_t enable               : 1; /* interrupt enable */
+  uint8_t lir                  : 1; /* interrupt pulsed or latched */
+} lsm6dsv16x_interrupt_mode_t;
+int32_t lsm6dsv16x_interrupt_enable_set(stmdev_ctx_t *ctx,
+                                        lsm6dsv16x_interrupt_mode_t val);
+int32_t lsm6dsv16x_interrupt_enable_get(stmdev_ctx_t *ctx,
+                                        lsm6dsv16x_interrupt_mode_t *val);
+
 typedef enum
 {
   LSM6DSV16X_125dps  = 0x0,
@@ -4126,6 +4136,15 @@ typedef struct
   uint8_t fifo_full            : 1;
   uint8_t cnt_bdr              : 1;
   uint8_t emb_func_endop       : 1;
+  uint8_t timestamp            : 1;
+  uint8_t shub                 : 1;
+  uint8_t emb_func             : 1;
+  uint8_t sixd                 : 1;
+  uint8_t single_tap           : 1;
+  uint8_t double_tap           : 1;
+  uint8_t wakeup               : 1;
+  uint8_t freefall             : 1;
+  uint8_t sleep_change         : 1;
 } lsm6dsv16x_pin_int_route_t;
 int32_t lsm6dsv16x_pin_int1_route_set(stmdev_ctx_t *ctx,
                                       lsm6dsv16x_pin_int_route_t *val);

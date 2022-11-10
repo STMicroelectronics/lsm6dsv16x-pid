@@ -1005,6 +1005,64 @@ int32_t lsm6dsv16x_data_ready_mode_get(stmdev_ctx_t *ctx,
 }
 
 /**
+  * @brief  Enables interrupt.[set]
+  *
+  * @param  ctx      read / write interface definitions
+  * @param  val      enable/disable, latched/pulsed
+  * @retval          interface status (MANDATORY: return 0 -> no Error)
+  *
+  */
+int32_t lsm6dsv16x_interrupt_enable_set(stmdev_ctx_t *ctx,
+                                        lsm6dsv16x_interrupt_mode_t val)
+{
+  lsm6dsv16x_tap_cfg0_t cfg;
+  lsm6dsv16x_functions_enable_t func;
+  int32_t ret;
+
+  ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_FUNCTIONS_ENABLE, (uint8_t *)&func, 1);
+
+  if (ret == 0)
+  {
+    func.interrupts_enable = val.enable;
+    ret = lsm6dsv16x_write_reg(ctx, LSM6DSV16X_FUNCTIONS_ENABLE, (uint8_t *)&func, 1);
+  }
+
+  ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_TAP_CFG0, (uint8_t *)&cfg, 1);
+
+  if (ret == 0)
+  {
+    cfg.lir = val.lir;
+    ret = lsm6dsv16x_write_reg(ctx, LSM6DSV16X_TAP_CFG0, (uint8_t *)&cfg, 1);
+  }
+
+  return ret;
+}
+
+/**
+  * @brief  Enables latched interrupt mode.[get]
+  *
+  * @param  ctx      read / write interface definitions
+  * @param  val      enable/disable, latched/pulsed
+  * @retval          interface status (MANDATORY: return 0 -> no Error)
+  *
+  */
+int32_t lsm6dsv16x_interrupt_enable_get(stmdev_ctx_t *ctx,
+                                        lsm6dsv16x_interrupt_mode_t *val)
+{
+  lsm6dsv16x_tap_cfg0_t cfg;
+  lsm6dsv16x_functions_enable_t func;
+  int32_t ret;
+
+  ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_FUNCTIONS_ENABLE, (uint8_t *)&func, 1);
+  ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_TAP_CFG0, (uint8_t *)&cfg, 1);
+
+  val->enable = func.interrupts_enable;
+  val->lir = cfg.lir;
+
+  return ret;
+}
+
+/**
   * @brief  Gyroscope full-scale selection[set]
   *
   * @param  ctx      read / write interface definitions
@@ -1456,6 +1514,7 @@ int32_t lsm6dsv16x_pin_int1_route_set(stmdev_ctx_t *ctx,
                                       lsm6dsv16x_pin_int_route_t *val)
 {
   lsm6dsv16x_int1_ctrl_t          int1_ctrl;
+  lsm6dsv16x_md1_cfg_t            md1_cfg;
   int32_t ret;
 
   ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_INT1_CTRL, (uint8_t *)&int1_ctrl, 1);
@@ -1469,6 +1528,19 @@ int32_t lsm6dsv16x_pin_int1_route_set(stmdev_ctx_t *ctx,
 
   ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_INT1_CTRL, (uint8_t *)&int1_ctrl,
                               1);
+
+  ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_MD1_CFG, (uint8_t *)&md1_cfg, 1);
+
+  md1_cfg.int1_shub            = val->shub;
+  md1_cfg.int1_emb_func        = val->emb_func;
+  md1_cfg.int1_6d              = val->sixd;
+  md1_cfg.int1_single_tap      = val->single_tap;
+  md1_cfg.int1_double_tap      = val->double_tap;
+  md1_cfg.int1_wu              = val->wakeup;
+  md1_cfg.int1_ff              = val->freefall;
+  md1_cfg.int1_sleep_change    = val->sleep_change;
+
+  ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_MD1_CFG, (uint8_t *)&md1_cfg, 1);
 
   return ret;
 }
@@ -1485,6 +1557,7 @@ int32_t lsm6dsv16x_pin_int1_route_get(stmdev_ctx_t *ctx,
                                       lsm6dsv16x_pin_int_route_t *val)
 {
   lsm6dsv16x_int1_ctrl_t          int1_ctrl;
+  lsm6dsv16x_md1_cfg_t            md1_cfg;
   int32_t ret;
 
   ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_INT1_CTRL, (uint8_t *)&int1_ctrl, 1);
@@ -1495,6 +1568,17 @@ int32_t lsm6dsv16x_pin_int1_route_get(stmdev_ctx_t *ctx,
   val->fifo_ovr  = int1_ctrl.int1_fifo_ovr;
   val->fifo_full = int1_ctrl.int1_fifo_full;
   val->cnt_bdr   = int1_ctrl.int1_cnt_bdr;
+
+  ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_MD1_CFG, (uint8_t *)&md1_cfg, 1);
+
+  val->shub         = md1_cfg.int1_shub;
+  val->emb_func     = md1_cfg.int1_emb_func;
+  val->sixd         = md1_cfg.int1_6d;
+  val->single_tap   = md1_cfg.int1_single_tap;
+  val->double_tap   = md1_cfg.int1_double_tap;
+  val->wakeup       = md1_cfg.int1_wu;
+  val->freefall     = md1_cfg.int1_ff;
+  val->sleep_change = md1_cfg.int1_sleep_change;
 
   return ret;
 }
@@ -1511,6 +1595,7 @@ int32_t lsm6dsv16x_pin_int2_route_set(stmdev_ctx_t *ctx,
                                       lsm6dsv16x_pin_int_route_t *val)
 {
   lsm6dsv16x_int2_ctrl_t          int2_ctrl;
+  lsm6dsv16x_md2_cfg_t            md2_cfg;
   int32_t ret;
 
   ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_INT2_CTRL, (uint8_t *)&int2_ctrl, 1);
@@ -1527,6 +1612,19 @@ int32_t lsm6dsv16x_pin_int2_route_set(stmdev_ctx_t *ctx,
   ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_INT2_CTRL, (uint8_t *)&int2_ctrl,
                               1);
 
+  ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_MD2_CFG, (uint8_t *)&md2_cfg, 1);
+
+  md2_cfg.int2_timestamp       = val->timestamp;
+  md2_cfg.int2_emb_func        = val->emb_func;
+  md2_cfg.int2_6d              = val->sixd;
+  md2_cfg.int2_single_tap      = val->single_tap;
+  md2_cfg.int2_double_tap      = val->double_tap;
+  md2_cfg.int2_wu              = val->wakeup;
+  md2_cfg.int2_ff              = val->freefall;
+  md2_cfg.int2_sleep_change    = val->sleep_change;
+
+  ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_MD2_CFG, (uint8_t *)&md2_cfg, 1);
+
   return ret;
 }
 
@@ -1542,6 +1640,7 @@ int32_t lsm6dsv16x_pin_int2_route_get(stmdev_ctx_t *ctx,
                                       lsm6dsv16x_pin_int_route_t *val)
 {
   lsm6dsv16x_int2_ctrl_t          int2_ctrl;
+  lsm6dsv16x_md2_cfg_t            md2_cfg;
   int32_t ret;
 
   ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_INT2_CTRL, (uint8_t *)&int2_ctrl, 1);
@@ -1554,6 +1653,17 @@ int32_t lsm6dsv16x_pin_int2_route_get(stmdev_ctx_t *ctx,
   val->cnt_bdr        = int2_ctrl.int2_cnt_bdr;
   val->drdy_g_eis     = int2_ctrl.int2_drdy_g_eis;
   val->emb_func_endop = int2_ctrl.int2_emb_func_endop;
+
+  ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_MD2_CFG, (uint8_t *)&md2_cfg, 1);
+
+  val->timestamp      = md2_cfg.int2_timestamp;
+  val->emb_func       = md2_cfg.int2_emb_func;
+  val->sixd           = md2_cfg.int2_6d;
+  val->single_tap     = md2_cfg.int2_single_tap;
+  val->double_tap     = md2_cfg.int2_double_tap;
+  val->wakeup         = md2_cfg.int2_wu;
+  val->freefall       = md2_cfg.int2_ff;
+  val->sleep_change   = md2_cfg.int2_sleep_change;
 
   return ret;
 }
