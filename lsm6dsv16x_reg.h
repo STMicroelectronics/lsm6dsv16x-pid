@@ -5223,11 +5223,13 @@ int32_t lsm6dsv16x_act_sleep_xl_odr_get(stmdev_ctx_t *ctx,
 
 typedef struct
 {
-  uint32_t wk_ths_mg;
-  uint32_t inact_ths_mg;
+  lsm6dsv16x_inactivity_dur_t inactivity_cfg;
+  uint8_t inactivity_ths;
+  uint8_t threshold;
+  uint8_t duration;
 } lsm6dsv16x_act_thresholds_t;
 int32_t lsm6dsv16x_act_thresholds_set(stmdev_ctx_t *ctx,
-                                      lsm6dsv16x_act_thresholds_t val);
+                                      lsm6dsv16x_act_thresholds_t *val);
 int32_t lsm6dsv16x_act_thresholds_get(stmdev_ctx_t *ctx,
                                       lsm6dsv16x_act_thresholds_t *val);
 

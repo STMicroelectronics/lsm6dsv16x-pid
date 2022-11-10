@@ -9876,112 +9876,31 @@ int32_t lsm6dsv16x_act_sleep_xl_odr_get(stmdev_ctx_t *ctx,
   *
   */
 int32_t lsm6dsv16x_act_thresholds_set(stmdev_ctx_t *ctx,
-                                      lsm6dsv16x_act_thresholds_t val)
+                                      lsm6dsv16x_act_thresholds_t *val)
 {
   lsm6dsv16x_inactivity_ths_t inactivity_ths;
   lsm6dsv16x_inactivity_dur_t inactivity_dur;
   lsm6dsv16x_wake_up_ths_t wake_up_ths;
+  lsm6dsv16x_wake_up_dur_t wake_up_dur;
   int32_t ret;
-  float_t tmp;
 
   ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_INACTIVITY_DUR, (uint8_t *)&inactivity_dur, 1);
-  if (ret == 0)
-  {
-    ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_INACTIVITY_THS, (uint8_t *)&inactivity_ths, 1);
-  }
+  ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_INACTIVITY_THS, (uint8_t *)&inactivity_ths, 1);
+  ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_WAKE_UP_THS, (uint8_t *)&wake_up_ths, 1);
+  ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_WAKE_UP_DUR, (uint8_t *)&wake_up_dur, 1);
 
-  if (ret == 0)
-  {
-    ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_WAKE_UP_THS, (uint8_t *)&wake_up_ths, 1);
-  }
+  inactivity_dur.wu_inact_ths_w = val->inactivity_cfg.wu_inact_ths_w;
+  inactivity_dur.xl_inact_odr = val->inactivity_cfg.xl_inact_odr;
+  inactivity_dur.inact_dur = val->inactivity_cfg.inact_dur;
 
-  if ((val.wk_ths_mg < (uint32_t)(7.8125f * 63.0f))
-      && (val.inact_ths_mg < (uint32_t)(7.8125f * 63.0f)))
-  {
-    inactivity_dur.wu_inact_ths_w = 0;
+  inactivity_ths.inact_ths = val->inactivity_ths;
+  wake_up_ths.wk_ths = val->threshold;
+  wake_up_dur.wake_dur = val->duration;
 
-    tmp = (float_t)val.inact_ths_mg / 7.8125f;
-    inactivity_ths.inact_ths = (uint8_t)tmp;
-
-    tmp = (float_t)val.wk_ths_mg / 7.8125f;
-    wake_up_ths.wk_ths = (uint8_t)tmp;
-  }
-  else if ((val.wk_ths_mg < (uint32_t)(15.625f * 63.0f))
-           && (val.inact_ths_mg < (uint32_t)(15.625f * 63.0f)))
-  {
-    inactivity_dur.wu_inact_ths_w = 1;
-
-    tmp = (float_t)val.inact_ths_mg / 15.625f;
-    inactivity_ths.inact_ths = (uint8_t)tmp;
-
-    tmp = (float_t)val.wk_ths_mg / 15.625f;
-    wake_up_ths.wk_ths = (uint8_t)tmp;
-  }
-  else if ((val.wk_ths_mg < (uint32_t)(31.25f * 63.0f))
-           && (val.inact_ths_mg < (uint32_t)(31.25f * 63.0f)))
-  {
-    inactivity_dur.wu_inact_ths_w = 2;
-
-    tmp = (float_t)val.inact_ths_mg / 31.25f;
-    inactivity_ths.inact_ths = (uint8_t)tmp;
-
-    tmp = (float_t)val.wk_ths_mg / 31.25f;
-    wake_up_ths.wk_ths = (uint8_t)tmp;
-  }
-  else if ((val.wk_ths_mg < (uint32_t)(62.5f * 63.0f))
-           && (val.inact_ths_mg < (uint32_t)(62.5f * 63.0f)))
-  {
-    inactivity_dur.wu_inact_ths_w = 3;
-
-    tmp = (float_t)val.inact_ths_mg / 62.5f;
-    inactivity_ths.inact_ths = (uint8_t)tmp;
-
-    tmp = (float_t)val.wk_ths_mg / 62.5f;
-    wake_up_ths.wk_ths = (uint8_t)tmp;
-  }
-  else if ((val.wk_ths_mg < (uint32_t)(125.0f * 63.0f))
-           && (val.inact_ths_mg < (uint32_t)(125.0f * 63.0f)))
-  {
-    inactivity_dur.wu_inact_ths_w = 4;
-
-    tmp = (float_t)val.inact_ths_mg / 125.0f;
-    inactivity_ths.inact_ths = (uint8_t)tmp;
-
-    tmp = (float_t)val.wk_ths_mg / 125.0f;
-    wake_up_ths.wk_ths = (uint8_t)tmp;
-  }
-  else if ((val.wk_ths_mg < (uint32_t)(250.0f * 63.0f))
-           && (val.inact_ths_mg < (uint32_t)(250.0f * 63.0f)))
-  {
-    inactivity_dur.wu_inact_ths_w = 5;
-
-    tmp = (float_t)val.inact_ths_mg / 250.0f;
-    inactivity_ths.inact_ths = (uint8_t)tmp;
-
-    tmp = (float_t)val.wk_ths_mg / 250.0f;
-    wake_up_ths.wk_ths = (uint8_t)tmp;
-  }
-  else // out of limit
-  {
-    inactivity_dur.wu_inact_ths_w = 5;
-    inactivity_ths.inact_ths = 0x3FU;
-    wake_up_ths.wk_ths = 0x3FU;
-  }
-
-  if (ret == 0)
-  {
-    ret = lsm6dsv16x_write_reg(ctx, LSM6DSV16X_INACTIVITY_DUR, (uint8_t *)&inactivity_dur, 1);
-  }
-  if (ret == 0)
-  {
-
-    ret = lsm6dsv16x_write_reg(ctx, LSM6DSV16X_INACTIVITY_THS, (uint8_t *)&inactivity_ths, 1);
-  }
-  if (ret == 0)
-  {
-
-    ret = lsm6dsv16x_write_reg(ctx, LSM6DSV16X_WAKE_UP_THS, (uint8_t *)&wake_up_ths, 1);
-  }
+  ret = lsm6dsv16x_write_reg(ctx, LSM6DSV16X_INACTIVITY_DUR, (uint8_t *)&inactivity_dur, 1);
+  ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_INACTIVITY_THS, (uint8_t *)&inactivity_ths, 1);
+  ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_WAKE_UP_THS, (uint8_t *)&wake_up_ths, 1);
+  ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_WAKE_UP_DUR, (uint8_t *)&wake_up_dur, 1);
 
   return ret;
 }
@@ -10000,69 +9919,21 @@ int32_t lsm6dsv16x_act_thresholds_get(stmdev_ctx_t *ctx,
   lsm6dsv16x_inactivity_dur_t inactivity_dur;
   lsm6dsv16x_inactivity_ths_t inactivity_ths;
   lsm6dsv16x_wake_up_ths_t wake_up_ths;
+  lsm6dsv16x_wake_up_dur_t wake_up_dur;
   int32_t ret;
-  float_t tmp;
 
   ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_INACTIVITY_DUR, (uint8_t *)&inactivity_dur, 1);
-  if (ret == 0)
-  {
-    ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_INACTIVITY_THS, (uint8_t *)&inactivity_ths, 1);
-  }
-  if (ret == 0)
-  {
-    ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_WAKE_UP_THS, (uint8_t *)&wake_up_ths, 1);
-  }
+  ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_INACTIVITY_THS, (uint8_t *)&inactivity_ths, 1);
+  ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_WAKE_UP_THS, (uint8_t *)&wake_up_ths, 1);
+  ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_WAKE_UP_DUR, (uint8_t *)&wake_up_dur, 1);
 
-  switch (inactivity_dur.wu_inact_ths_w)
-  {
-    case 0:
-      tmp = (float_t)wake_up_ths.wk_ths * 7.8125f;
-      val->wk_ths_mg = (uint32_t)tmp;
+  val->inactivity_cfg.wu_inact_ths_w = inactivity_dur.wu_inact_ths_w;
+  val->inactivity_cfg.xl_inact_odr = inactivity_dur.xl_inact_odr;
+  val->inactivity_cfg.inact_dur = inactivity_dur.inact_dur;
 
-      tmp = (float_t)inactivity_ths.inact_ths * 7.8125f;
-      val->inact_ths_mg = (uint32_t)tmp;
-      break;
-
-    case 1:
-      tmp = (float_t)wake_up_ths.wk_ths * 15.625f;
-      val->wk_ths_mg = (uint32_t)tmp;
-
-      tmp = (float_t)inactivity_ths.inact_ths * 15.625f;
-      val->inact_ths_mg = (uint32_t)tmp;
-      break;
-
-    case 2:
-      tmp = (float_t)wake_up_ths.wk_ths * 31.25f;
-      val->wk_ths_mg = (uint32_t)tmp;
-
-      tmp = (float_t)inactivity_ths.inact_ths * 31.25f;
-      val->inact_ths_mg = (uint32_t)tmp;
-      break;
-
-    case 3:
-      tmp = (float_t)wake_up_ths.wk_ths * 62.5f;
-      val->wk_ths_mg = (uint32_t)tmp;
-
-      tmp = (float_t)inactivity_ths.inact_ths * 62.5f;
-      val->inact_ths_mg = (uint32_t)tmp;
-      break;
-
-    case 4:
-      tmp = (float_t)wake_up_ths.wk_ths * 125.0f;
-      val->wk_ths_mg = (uint32_t)tmp;
-
-      tmp = (float_t)inactivity_ths.inact_ths * 125.0f;
-      val->inact_ths_mg = (uint32_t)tmp;
-      break;
-
-    default:
-      tmp = (float_t)wake_up_ths.wk_ths * 250.0f;
-      val->wk_ths_mg = (uint32_t)tmp;
-
-      tmp = (float_t)inactivity_ths.inact_ths * 250.0f;
-      val->inact_ths_mg = (uint32_t)tmp;
-      break;
-  }
+  val->inactivity_ths = inactivity_ths.inact_ths;
+  val->threshold = wake_up_ths.wk_ths;
+  val->duration = wake_up_dur.wake_dur;
 
   return ret;
 }
