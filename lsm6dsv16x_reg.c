@@ -9231,9 +9231,9 @@ int32_t lsm6dsv16x_tap_detection_set(stmdev_ctx_t *ctx,
   ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_TAP_CFG0, (uint8_t *)&tap_cfg0, 1);
   if (ret == 0)
   {
-    tap_cfg0.tap_z_en = val.tap_x_en;
+    tap_cfg0.tap_x_en = val.tap_x_en;
     tap_cfg0.tap_y_en = val.tap_y_en;
-    tap_cfg0.tap_x_en = val.tap_z_en;
+    tap_cfg0.tap_z_en = val.tap_z_en;
     ret = lsm6dsv16x_write_reg(ctx, LSM6DSV16X_TAP_CFG0, (uint8_t *)&tap_cfg0, 1);
   }
 
@@ -9255,7 +9255,7 @@ int32_t lsm6dsv16x_tap_detection_get(stmdev_ctx_t *ctx,
   int32_t ret;
 
   ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_TAP_CFG0, (uint8_t *)&tap_cfg0, 1);
-  val->tap_x_en = tap_cfg0.tap_z_en;
+  val->tap_x_en = tap_cfg0.tap_x_en;
   val->tap_y_en = tap_cfg0.tap_y_en;
   val->tap_z_en = tap_cfg0.tap_z_en;
 
