@@ -247,6 +247,16 @@ typedef struct
 #endif /* DRV_BYTE_ORDER */
 } lsm6dsv16x_if_cfg_t;
 
+#define LSM6DSV16X_ODR_TRIG_CFG                 0x6U
+typedef struct
+{
+#if DRV_BYTE_ORDER == DRV_LITTLE_ENDIAN
+  uint8_t odr_trig_nodr        : 8;
+#elif DRV_BYTE_ORDER == DRV_BIG_ENDIAN
+  uint8_t odr_trig_nodr        : 8;
+#endif /* DRV_BYTE_ORDER */
+} lsm6dsv16x_odr_trig_cfg_t;
+
 #define LSM6DSV16X_FIFO_CTRL1                   0x7U
 typedef struct
 {
@@ -1398,6 +1408,18 @@ typedef struct
   uint8_t int2_timestamp       : 1;
 #endif /* DRV_BYTE_ORDER */
 } lsm6dsv16x_md2_cfg_t;
+
+#define LSM6DSV16X_HAODR_CFG                  0x62U
+typedef struct
+{
+#if DRV_BYTE_ORDER == DRV_LITTLE_ENDIAN
+  uint8_t haodr_sel            : 2;
+  uint8_t not_used0            : 6;
+#elif DRV_BYTE_ORDER == DRV_BIG_ENDIAN
+  uint8_t not_used0            : 6;
+  uint8_t haodr_sel            : 2;
+#endif /* DRV_BYTE_ORDER */
+} lsm6dsv16x_haodr_cfg_t;
 
 #define LSM6DSV16X_EMB_FUNC_CFG               0x63U
 typedef struct
@@ -3597,6 +3619,7 @@ typedef union
   lsm6dsv16x_func_cfg_access_t          func_cfg_access;
   lsm6dsv16x_pin_ctrl_t                 pin_ctrl;
   lsm6dsv16x_if_cfg_t                   if_cfg;
+  lsm6dsv16x_odr_trig_cfg_t             odr_trig_cfg;
   lsm6dsv16x_fifo_ctrl1_t               fifo_ctrl1;
   lsm6dsv16x_fifo_ctrl2_t               fifo_ctrl2;
   lsm6dsv16x_fifo_ctrl3_t               fifo_ctrl3;
@@ -3897,29 +3920,55 @@ int32_t lsm6dsv16x_device_id_get(stmdev_ctx_t *ctx, uint8_t *val);
 
 typedef enum
 {
-  LSM6DSV16X_XL_ODR_OFF       = 0x0,
-  LSM6DSV16X_XL_ODR_AT_1Hz875 = 0x1,
-  LSM6DSV16X_XL_ODR_AT_7Hz5   = 0x2,
-  LSM6DSV16X_XL_ODR_AT_15Hz   = 0x3,
-  LSM6DSV16X_XL_ODR_AT_30Hz   = 0x4,
-  LSM6DSV16X_XL_ODR_AT_60Hz   = 0x5,
-  LSM6DSV16X_XL_ODR_AT_120Hz  = 0x6,
-  LSM6DSV16X_XL_ODR_AT_240Hz  = 0x7,
-  LSM6DSV16X_XL_ODR_AT_480Hz  = 0x8,
-  LSM6DSV16X_XL_ODR_AT_960Hz  = 0x9,
-  LSM6DSV16X_XL_ODR_AT_1920Hz = 0xA,
-  LSM6DSV16X_XL_ODR_AT_3840Hz = 0xB,
-  LSM6DSV16X_XL_ODR_AT_7680Hz = 0xC,
-} lsm6dsv16x_xl_data_rate_t;
+  LSM6DSV16X_ODR_OFF              = 0x0,
+  LSM6DSV16X_ODR_AT_1Hz875        = 0x1,
+  LSM6DSV16X_ODR_AT_7Hz5          = 0x2,
+  LSM6DSV16X_ODR_AT_15Hz          = 0x3,
+  LSM6DSV16X_ODR_AT_30Hz          = 0x4,
+  LSM6DSV16X_ODR_AT_60Hz          = 0x5,
+  LSM6DSV16X_ODR_AT_120Hz         = 0x6,
+  LSM6DSV16X_ODR_AT_240Hz         = 0x7,
+  LSM6DSV16X_ODR_AT_480Hz         = 0x8,
+  LSM6DSV16X_ODR_AT_960Hz         = 0x9,
+  LSM6DSV16X_ODR_AT_1920Hz        = 0xA,
+  LSM6DSV16X_ODR_AT_3840Hz        = 0xB,
+  LSM6DSV16X_ODR_AT_7680Hz        = 0xC,
+  LSM6DSV16X_ODR_HA01_AT_15Hz625  = 0x13,
+  LSM6DSV16X_ODR_HA01_AT_31Hz25   = 0x14,
+  LSM6DSV16X_ODR_HA01_AT_62Hz5    = 0x15,
+  LSM6DSV16X_ODR_HA01_AT_125Hz    = 0x16,
+  LSM6DSV16X_ODR_HA01_AT_250Hz    = 0x17,
+  LSM6DSV16X_ODR_HA01_AT_500Hz    = 0x18,
+  LSM6DSV16X_ODR_HA01_AT_1000Hz   = 0x19,
+  LSM6DSV16X_ODR_HA01_AT_2000Hz   = 0x1A,
+  LSM6DSV16X_ODR_HA01_AT_4000Hz   = 0x1B,
+  LSM6DSV16X_ODR_HA01_AT_8000Hz   = 0x1C,
+  LSM6DSV16X_ODR_HA02_AT_12Hz5    = 0x23,
+  LSM6DSV16X_ODR_HA02_AT_25Hz     = 0x24,
+  LSM6DSV16X_ODR_HA02_AT_50Hz     = 0x25,
+  LSM6DSV16X_ODR_HA02_AT_100Hz    = 0x26,
+  LSM6DSV16X_ODR_HA02_AT_200Hz    = 0x27,
+  LSM6DSV16X_ODR_HA02_AT_400Hz    = 0x28,
+  LSM6DSV16X_ODR_HA02_AT_800Hz    = 0x29,
+  LSM6DSV16X_ODR_HA02_AT_1600Hz   = 0x2A,
+  LSM6DSV16X_ODR_HA02_AT_3200Hz   = 0x2B,
+  LSM6DSV16X_ODR_HA02_AT_6400Hz   = 0x2C,
+} lsm6dsv16x_data_rate_t;
 int32_t lsm6dsv16x_xl_data_rate_set(stmdev_ctx_t *ctx,
-                                    lsm6dsv16x_xl_data_rate_t val);
+                                    lsm6dsv16x_data_rate_t val);
 int32_t lsm6dsv16x_xl_data_rate_get(stmdev_ctx_t *ctx,
-                                    lsm6dsv16x_xl_data_rate_t *val);
+                                    lsm6dsv16x_data_rate_t *val);
+int32_t lsm6dsv16x_gy_data_rate_set(stmdev_ctx_t *ctx,
+                                    lsm6dsv16x_data_rate_t val);
+int32_t lsm6dsv16x_gy_data_rate_get(stmdev_ctx_t *ctx,
+                                    lsm6dsv16x_data_rate_t *val);
+
 
 typedef enum
 {
   LSM6DSV16X_XL_HIGH_PERFORMANCE_MD   = 0x0,
   LSM6DSV16X_XL_HIGH_ACCURANCY_ODR_MD = 0x1,
+  LSM6DSV16X_XL_ODR_TRIGGERED_MD      = 0x3,
   LSM6DSV16X_XL_LOW_POWER_2_AVG_MD    = 0x4,
   LSM6DSV16X_XL_LOW_POWER_4_AVG_MD    = 0x5,
   LSM6DSV16X_XL_LOW_POWER_8_AVG_MD    = 0x6,
@@ -3927,26 +3976,6 @@ typedef enum
 } lsm6dsv16x_xl_mode_t;
 int32_t lsm6dsv16x_xl_mode_set(stmdev_ctx_t *ctx, lsm6dsv16x_xl_mode_t val);
 int32_t lsm6dsv16x_xl_mode_get(stmdev_ctx_t *ctx, lsm6dsv16x_xl_mode_t *val);
-
-typedef enum
-{
-  LSM6DSV16X_GY_ODR_OFF       = 0x0,
-  LSM6DSV16X_GY_ODR_AT_7Hz5   = 0x2,
-  LSM6DSV16X_GY_ODR_AT_15Hz   = 0x3,
-  LSM6DSV16X_GY_ODR_AT_30Hz   = 0x4,
-  LSM6DSV16X_GY_ODR_AT_60Hz   = 0x5,
-  LSM6DSV16X_GY_ODR_AT_120Hz  = 0x6,
-  LSM6DSV16X_GY_ODR_AT_240Hz  = 0x7,
-  LSM6DSV16X_GY_ODR_AT_480Hz  = 0x8,
-  LSM6DSV16X_GY_ODR_AT_960Hz  = 0x9,
-  LSM6DSV16X_GY_ODR_AT_1920Hz = 0xa,
-  LSM6DSV16X_GY_ODR_AT_3840Hz = 0xb,
-  LSM6DSV16X_GY_ODR_AT_7680Hz = 0xc,
-} lsm6dsv16x_gy_data_rate_t;
-int32_t lsm6dsv16x_gy_data_rate_set(stmdev_ctx_t *ctx,
-                                    lsm6dsv16x_gy_data_rate_t val);
-int32_t lsm6dsv16x_gy_data_rate_get(stmdev_ctx_t *ctx,
-                                    lsm6dsv16x_gy_data_rate_t *val);
 
 typedef enum
 {
@@ -3963,6 +3992,9 @@ int32_t lsm6dsv16x_auto_increment_get(stmdev_ctx_t *ctx, uint8_t *val);
 
 int32_t lsm6dsv16x_block_data_update_set(stmdev_ctx_t *ctx, uint8_t val);
 int32_t lsm6dsv16x_block_data_update_get(stmdev_ctx_t *ctx, uint8_t *val);
+
+int32_t lsm6dsv16x_odr_trig_cfg_set(stmdev_ctx_t *ctx, uint8_t val);
+int32_t lsm6dsv16x_odr_trig_cfg_get(stmdev_ctx_t *ctx, uint8_t *val);
 
 typedef enum
 {

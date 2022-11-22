@@ -531,14 +531,16 @@ int32_t lsm6dsv16x_device_id_get(stmdev_ctx_t *ctx, uint8_t *val)
   * @brief  Accelerometer output data rate (ODR) selection.[set]
   *
   * @param  ctx      read / write interface definitions
-  * @param  val      XL_ODR_OFF, XL_ODR_AT_1Hz875, XL_ODR_AT_7Hz5, XL_ODR_AT_15Hz, XL_ODR_AT_30Hz, XL_ODR_AT_60Hz, XL_ODR_AT_120Hz, XL_ODR_AT_240Hz, XL_ODR_AT_480Hz, XL_ODR_AT_960Hz, XL_ODR_AT_1920Hz, XL_ODR_AT_3840Hz, XL_ODR_AT_7680Hz,
+  * @param  val      lsm6dsv16x_data_rate_t enum
   * @retval          interface status (MANDATORY: return 0 -> no Error)
   *
   */
 int32_t lsm6dsv16x_xl_data_rate_set(stmdev_ctx_t *ctx,
-                                    lsm6dsv16x_xl_data_rate_t val)
+                                    lsm6dsv16x_data_rate_t val)
 {
   lsm6dsv16x_ctrl1_t ctrl1;
+  lsm6dsv16x_haodr_cfg_t haodr;
+  uint8_t sel;
   int32_t ret;
 
   ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_CTRL1, (uint8_t *)&ctrl1, 1);
@@ -548,6 +550,14 @@ int32_t lsm6dsv16x_xl_data_rate_set(stmdev_ctx_t *ctx,
     ret = lsm6dsv16x_write_reg(ctx, LSM6DSV16X_CTRL1, (uint8_t *)&ctrl1, 1);
   }
 
+  sel = ((uint8_t)val >> 4) & 0xFU;
+  if (sel != 0U)
+  {
+    ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_HAODR_CFG, (uint8_t *)&haodr, 1);
+    haodr.haodr_sel = sel;
+    ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_HAODR_CFG, (uint8_t *)&haodr, 1);
+  }
+
   return ret;
 }
 
@@ -555,74 +565,188 @@ int32_t lsm6dsv16x_xl_data_rate_set(stmdev_ctx_t *ctx,
   * @brief  Accelerometer output data rate (ODR) selection.[get]
   *
   * @param  ctx      read / write interface definitions
-  * @param  val      XL_ODR_OFF, XL_ODR_AT_1Hz875, XL_ODR_AT_7Hz5, XL_ODR_AT_15Hz, XL_ODR_AT_30Hz, XL_ODR_AT_60Hz, XL_ODR_AT_120Hz, XL_ODR_AT_240Hz, XL_ODR_AT_480Hz, XL_ODR_AT_960Hz, XL_ODR_AT_1920Hz, XL_ODR_AT_3840Hz, XL_ODR_AT_7680Hz,
+  * @param  val      lsm6dsv16x_data_rate_t enum
   * @retval          interface status (MANDATORY: return 0 -> no Error)
   *
   */
 int32_t lsm6dsv16x_xl_data_rate_get(stmdev_ctx_t *ctx,
-                                    lsm6dsv16x_xl_data_rate_t *val)
+                                    lsm6dsv16x_data_rate_t *val)
 {
   lsm6dsv16x_ctrl1_t ctrl1;
+  lsm6dsv16x_haodr_cfg_t haodr;
+  uint8_t sel;
   int32_t ret;
 
   ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_CTRL1, (uint8_t *)&ctrl1, 1);
+  ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_HAODR_CFG, (uint8_t *)&haodr, 1);
+  sel = haodr.haodr_sel;
 
   switch (ctrl1.odr_xl)
   {
-    case LSM6DSV16X_XL_ODR_OFF:
-      *val = LSM6DSV16X_XL_ODR_OFF;
+    case LSM6DSV16X_ODR_OFF:
+      *val = LSM6DSV16X_ODR_OFF;
       break;
 
-    case LSM6DSV16X_XL_ODR_AT_1Hz875:
-      *val = LSM6DSV16X_XL_ODR_AT_1Hz875;
+    case LSM6DSV16X_ODR_AT_1Hz875:
+      *val = LSM6DSV16X_ODR_AT_1Hz875;
       break;
 
-    case LSM6DSV16X_XL_ODR_AT_7Hz5:
-      *val = LSM6DSV16X_XL_ODR_AT_7Hz5;
+    case LSM6DSV16X_ODR_AT_7Hz5:
+      *val = LSM6DSV16X_ODR_AT_7Hz5;
       break;
 
-    case LSM6DSV16X_XL_ODR_AT_15Hz:
-      *val = LSM6DSV16X_XL_ODR_AT_15Hz;
+    case LSM6DSV16X_ODR_AT_15Hz:
+      switch (sel) {
+      default:
+      case 0:
+        *val = LSM6DSV16X_ODR_AT_15Hz;
+        break;
+      case 1:
+        *val = LSM6DSV16X_ODR_HA01_AT_15Hz625;
+        break;
+      case 2:
+        *val = LSM6DSV16X_ODR_HA02_AT_12Hz5;
+        break;
+      }
       break;
 
-    case LSM6DSV16X_XL_ODR_AT_30Hz:
-      *val = LSM6DSV16X_XL_ODR_AT_30Hz;
+    case LSM6DSV16X_ODR_AT_30Hz:
+      switch (sel) {
+      default:
+      case 0:
+        *val = LSM6DSV16X_ODR_AT_30Hz;
+        break;
+      case 1:
+        *val = LSM6DSV16X_ODR_HA01_AT_31Hz25;
+        break;
+      case 2:
+        *val = LSM6DSV16X_ODR_HA02_AT_25Hz;
+        break;
+      }
       break;
 
-    case LSM6DSV16X_XL_ODR_AT_60Hz:
-      *val = LSM6DSV16X_XL_ODR_AT_60Hz;
+    case LSM6DSV16X_ODR_AT_60Hz:
+      switch (sel) {
+      default:
+      case 0:
+        *val = LSM6DSV16X_ODR_AT_60Hz;
+        break;
+      case 1:
+        *val = LSM6DSV16X_ODR_HA01_AT_62Hz5;
+        break;
+      case 2:
+        *val = LSM6DSV16X_ODR_HA02_AT_50Hz;
+        break;
+      }
       break;
 
-    case LSM6DSV16X_XL_ODR_AT_120Hz:
-      *val = LSM6DSV16X_XL_ODR_AT_120Hz;
+    case LSM6DSV16X_ODR_AT_120Hz:
+      switch (sel) {
+      default:
+      case 0:
+        *val = LSM6DSV16X_ODR_AT_120Hz;
+        break;
+      case 1:
+        *val = LSM6DSV16X_ODR_HA01_AT_125Hz;
+        break;
+      case 2:
+        *val = LSM6DSV16X_ODR_HA02_AT_100Hz;
+        break;
+      }
       break;
 
-    case LSM6DSV16X_XL_ODR_AT_240Hz:
-      *val = LSM6DSV16X_XL_ODR_AT_240Hz;
+    case LSM6DSV16X_ODR_AT_240Hz:
+      switch (sel) {
+      default:
+      case 0:
+        *val = LSM6DSV16X_ODR_AT_240Hz;
+        break;
+      case 1:
+        *val = LSM6DSV16X_ODR_HA01_AT_250Hz;
+        break;
+      case 2:
+        *val = LSM6DSV16X_ODR_HA02_AT_200Hz;
+        break;
+      }
       break;
 
-    case LSM6DSV16X_XL_ODR_AT_480Hz:
-      *val = LSM6DSV16X_XL_ODR_AT_480Hz;
+    case LSM6DSV16X_ODR_AT_480Hz:
+      switch (sel) {
+      default:
+      case 0:
+        *val = LSM6DSV16X_ODR_AT_480Hz;
+        break;
+      case 1:
+        *val = LSM6DSV16X_ODR_HA01_AT_500Hz;
+        break;
+      case 2:
+        *val = LSM6DSV16X_ODR_HA02_AT_400Hz;
+        break;
+      }
       break;
 
-    case LSM6DSV16X_XL_ODR_AT_960Hz:
-      *val = LSM6DSV16X_XL_ODR_AT_960Hz;
+    case LSM6DSV16X_ODR_AT_960Hz:
+      switch (sel) {
+      default:
+      case 0:
+        *val = LSM6DSV16X_ODR_AT_960Hz;
+        break;
+      case 1:
+        *val = LSM6DSV16X_ODR_HA01_AT_1000Hz;
+        break;
+      case 2:
+        *val = LSM6DSV16X_ODR_HA02_AT_800Hz;
+        break;
+      }
       break;
 
-    case LSM6DSV16X_XL_ODR_AT_1920Hz:
-      *val = LSM6DSV16X_XL_ODR_AT_1920Hz;
+    case LSM6DSV16X_ODR_AT_1920Hz:
+      switch (sel) {
+      default:
+      case 0:
+        *val = LSM6DSV16X_ODR_AT_1920Hz;
+        break;
+      case 1:
+        *val = LSM6DSV16X_ODR_HA01_AT_2000Hz;
+        break;
+      case 2:
+        *val = LSM6DSV16X_ODR_HA02_AT_1600Hz;
+        break;
+      }
       break;
 
-    case LSM6DSV16X_XL_ODR_AT_3840Hz:
-      *val = LSM6DSV16X_XL_ODR_AT_3840Hz;
+    case LSM6DSV16X_ODR_AT_3840Hz:
+      switch (sel) {
+      default:
+      case 0:
+        *val = LSM6DSV16X_ODR_AT_3840Hz;
+        break;
+      case 1:
+        *val = LSM6DSV16X_ODR_HA01_AT_4000Hz;
+        break;
+      case 2:
+        *val = LSM6DSV16X_ODR_HA02_AT_3200Hz;
+        break;
+      }
       break;
 
-    case LSM6DSV16X_XL_ODR_AT_7680Hz:
-      *val = LSM6DSV16X_XL_ODR_AT_7680Hz;
+    case LSM6DSV16X_ODR_AT_7680Hz:
+      switch (sel) {
+      default:
+      case 0:
+        *val = LSM6DSV16X_ODR_AT_7680Hz;
+        break;
+      case 1:
+        *val = LSM6DSV16X_ODR_HA01_AT_8000Hz;
+        break;
+      case 2:
+        *val = LSM6DSV16X_ODR_HA02_AT_6400Hz;
+        break;
+      }
       break;
 
     default:
-      *val = LSM6DSV16X_XL_ODR_OFF;
+      *val = LSM6DSV16X_ODR_OFF;
       break;
   }
   return ret;
@@ -677,6 +801,10 @@ int32_t lsm6dsv16x_xl_mode_get(stmdev_ctx_t *ctx, lsm6dsv16x_xl_mode_t *val)
       *val = LSM6DSV16X_XL_HIGH_ACCURANCY_ODR_MD;
       break;
 
+    case LSM6DSV16X_XL_ODR_TRIGGERED_MD:
+      *val = LSM6DSV16X_XL_ODR_TRIGGERED_MD;
+      break;
+
     case LSM6DSV16X_XL_LOW_POWER_2_AVG_MD:
       *val = LSM6DSV16X_XL_LOW_POWER_2_AVG_MD;
       break;
@@ -704,14 +832,16 @@ int32_t lsm6dsv16x_xl_mode_get(stmdev_ctx_t *ctx, lsm6dsv16x_xl_mode_t *val)
   * @brief  Gyroscope output data rate (ODR) selection.[set]
   *
   * @param  ctx      read / write interface definitions
-  * @param  val      GY_ODR_OFF, GY_ODR_AT_7Hz5, GY_ODR_AT_15Hz, GY_ODR_AT_30Hz, GY_ODR_AT_60Hz, GY_ODR_AT_120Hz, GY_ODR_AT_240Hz, GY_ODR_AT_480Hz, GY_ODR_AT_960Hz, GY_ODR_AT_1920Hz, GY_ODR_AT_3840Hz, GY_ODR_AT_7680Hz,
+  * @param  val      lsm6dsv16x_data_rate_t enum
   * @retval          interface status (MANDATORY: return 0 -> no Error)
   *
   */
 int32_t lsm6dsv16x_gy_data_rate_set(stmdev_ctx_t *ctx,
-                                    lsm6dsv16x_gy_data_rate_t val)
+                                    lsm6dsv16x_data_rate_t val)
 {
   lsm6dsv16x_ctrl2_t ctrl2;
+  lsm6dsv16x_haodr_cfg_t haodr;
+  uint8_t sel;
   int32_t ret;
 
   ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_CTRL2, (uint8_t *)&ctrl2, 1);
@@ -722,6 +852,14 @@ int32_t lsm6dsv16x_gy_data_rate_set(stmdev_ctx_t *ctx,
     ret = lsm6dsv16x_write_reg(ctx, LSM6DSV16X_CTRL2, (uint8_t *)&ctrl2, 1);
   }
 
+  sel = ((uint8_t)val >> 4) & 0xFU;
+  if (sel != 0U)
+  {
+    ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_HAODR_CFG, (uint8_t *)&haodr, 1);
+    haodr.haodr_sel = sel;
+    ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_HAODR_CFG, (uint8_t *)&haodr, 1);
+  }
+
   return ret;
 }
 
@@ -729,70 +867,188 @@ int32_t lsm6dsv16x_gy_data_rate_set(stmdev_ctx_t *ctx,
   * @brief  Gyroscope output data rate (ODR) selection.[get]
   *
   * @param  ctx      read / write interface definitions
-  * @param  val      GY_ODR_OFF, GY_ODR_AT_7Hz5, GY_ODR_AT_15Hz, GY_ODR_AT_30Hz, GY_ODR_AT_60Hz, GY_ODR_AT_120Hz, GY_ODR_AT_240Hz, GY_ODR_AT_480Hz, GY_ODR_AT_960Hz, GY_ODR_AT_1920Hz, GY_ODR_AT_3840Hz, GY_ODR_AT_7680Hz,
+  * @param  val      lsm6dsv16x_data_rate_t enum
   * @retval          interface status (MANDATORY: return 0 -> no Error)
   *
   */
 int32_t lsm6dsv16x_gy_data_rate_get(stmdev_ctx_t *ctx,
-                                    lsm6dsv16x_gy_data_rate_t *val)
+                                    lsm6dsv16x_data_rate_t *val)
 {
   lsm6dsv16x_ctrl2_t ctrl2;
+  lsm6dsv16x_haodr_cfg_t haodr;
+  uint8_t sel;
   int32_t ret;
 
   ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_CTRL2, (uint8_t *)&ctrl2, 1);
+  ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_HAODR_CFG, (uint8_t *)&haodr, 1);
+  sel = haodr.haodr_sel;
 
   switch (ctrl2.odr_g)
   {
-    case LSM6DSV16X_GY_ODR_OFF:
-      *val = LSM6DSV16X_GY_ODR_OFF;
+    case LSM6DSV16X_ODR_OFF:
+      *val = LSM6DSV16X_ODR_OFF;
       break;
 
-    case LSM6DSV16X_GY_ODR_AT_7Hz5:
-      *val = LSM6DSV16X_GY_ODR_AT_7Hz5;
+    case LSM6DSV16X_ODR_AT_1Hz875:
+      *val = LSM6DSV16X_ODR_AT_1Hz875;
       break;
 
-    case LSM6DSV16X_GY_ODR_AT_15Hz:
-      *val = LSM6DSV16X_GY_ODR_AT_15Hz;
+    case LSM6DSV16X_ODR_AT_7Hz5:
+      *val = LSM6DSV16X_ODR_AT_7Hz5;
       break;
 
-    case LSM6DSV16X_GY_ODR_AT_30Hz:
-      *val = LSM6DSV16X_GY_ODR_AT_30Hz;
+    case LSM6DSV16X_ODR_AT_15Hz:
+      switch (sel) {
+      default:
+      case 0:
+        *val = LSM6DSV16X_ODR_AT_15Hz;
+        break;
+      case 1:
+        *val = LSM6DSV16X_ODR_HA01_AT_15Hz625;
+        break;
+      case 2:
+        *val = LSM6DSV16X_ODR_HA02_AT_12Hz5;
+        break;
+      }
       break;
 
-    case LSM6DSV16X_GY_ODR_AT_60Hz:
-      *val = LSM6DSV16X_GY_ODR_AT_60Hz;
+    case LSM6DSV16X_ODR_AT_30Hz:
+      switch (sel) {
+      default:
+      case 0:
+        *val = LSM6DSV16X_ODR_AT_30Hz;
+        break;
+      case 1:
+        *val = LSM6DSV16X_ODR_HA01_AT_31Hz25;
+        break;
+      case 2:
+        *val = LSM6DSV16X_ODR_HA02_AT_25Hz;
+        break;
+      }
       break;
 
-    case LSM6DSV16X_GY_ODR_AT_120Hz:
-      *val = LSM6DSV16X_GY_ODR_AT_120Hz;
+    case LSM6DSV16X_ODR_AT_60Hz:
+      switch (sel) {
+      default:
+      case 0:
+        *val = LSM6DSV16X_ODR_AT_60Hz;
+        break;
+      case 1:
+        *val = LSM6DSV16X_ODR_HA01_AT_62Hz5;
+        break;
+      case 2:
+        *val = LSM6DSV16X_ODR_HA02_AT_50Hz;
+        break;
+      }
       break;
 
-    case LSM6DSV16X_GY_ODR_AT_240Hz:
-      *val = LSM6DSV16X_GY_ODR_AT_240Hz;
+    case LSM6DSV16X_ODR_AT_120Hz:
+      switch (sel) {
+      default:
+      case 0:
+        *val = LSM6DSV16X_ODR_AT_120Hz;
+        break;
+      case 1:
+        *val = LSM6DSV16X_ODR_HA01_AT_125Hz;
+        break;
+      case 2:
+        *val = LSM6DSV16X_ODR_HA02_AT_100Hz;
+        break;
+      }
       break;
 
-    case LSM6DSV16X_GY_ODR_AT_480Hz:
-      *val = LSM6DSV16X_GY_ODR_AT_480Hz;
+    case LSM6DSV16X_ODR_AT_240Hz:
+      switch (sel) {
+      default:
+      case 0:
+        *val = LSM6DSV16X_ODR_AT_240Hz;
+        break;
+      case 1:
+        *val = LSM6DSV16X_ODR_HA01_AT_250Hz;
+        break;
+      case 2:
+        *val = LSM6DSV16X_ODR_HA02_AT_200Hz;
+        break;
+      }
       break;
 
-    case LSM6DSV16X_GY_ODR_AT_960Hz:
-      *val = LSM6DSV16X_GY_ODR_AT_960Hz;
+    case LSM6DSV16X_ODR_AT_480Hz:
+      switch (sel) {
+      default:
+      case 0:
+        *val = LSM6DSV16X_ODR_AT_480Hz;
+        break;
+      case 1:
+        *val = LSM6DSV16X_ODR_HA01_AT_500Hz;
+        break;
+      case 2:
+        *val = LSM6DSV16X_ODR_HA02_AT_400Hz;
+        break;
+      }
       break;
 
-    case LSM6DSV16X_GY_ODR_AT_1920Hz:
-      *val = LSM6DSV16X_GY_ODR_AT_1920Hz;
+    case LSM6DSV16X_ODR_AT_960Hz:
+      switch (sel) {
+      default:
+      case 0:
+        *val = LSM6DSV16X_ODR_AT_960Hz;
+        break;
+      case 1:
+        *val = LSM6DSV16X_ODR_HA01_AT_1000Hz;
+        break;
+      case 2:
+        *val = LSM6DSV16X_ODR_HA02_AT_800Hz;
+        break;
+      }
       break;
 
-    case LSM6DSV16X_GY_ODR_AT_3840Hz:
-      *val = LSM6DSV16X_GY_ODR_AT_3840Hz;
+    case LSM6DSV16X_ODR_AT_1920Hz:
+      switch (sel) {
+      default:
+      case 0:
+        *val = LSM6DSV16X_ODR_AT_1920Hz;
+        break;
+      case 1:
+        *val = LSM6DSV16X_ODR_HA01_AT_2000Hz;
+        break;
+      case 2:
+        *val = LSM6DSV16X_ODR_HA02_AT_1600Hz;
+        break;
+      }
       break;
 
-    case LSM6DSV16X_GY_ODR_AT_7680Hz:
-      *val = LSM6DSV16X_GY_ODR_AT_7680Hz;
+    case LSM6DSV16X_ODR_AT_3840Hz:
+      switch (sel) {
+      default:
+      case 0:
+        *val = LSM6DSV16X_ODR_AT_3840Hz;
+        break;
+      case 1:
+        *val = LSM6DSV16X_ODR_HA01_AT_4000Hz;
+        break;
+      case 2:
+        *val = LSM6DSV16X_ODR_HA02_AT_3200Hz;
+        break;
+      }
+      break;
+
+    case LSM6DSV16X_ODR_AT_7680Hz:
+      switch (sel) {
+      default:
+      case 0:
+        *val = LSM6DSV16X_ODR_AT_7680Hz;
+        break;
+      case 1:
+        *val = LSM6DSV16X_ODR_HA01_AT_8000Hz;
+        break;
+      case 2:
+        *val = LSM6DSV16X_ODR_HA02_AT_6400Hz;
+        break;
+      }
       break;
 
     default:
-      *val = LSM6DSV16X_GY_ODR_OFF;
+      *val = LSM6DSV16X_ODR_OFF;
       break;
   }
   return ret;
@@ -942,6 +1198,53 @@ int32_t lsm6dsv16x_block_data_update_get(stmdev_ctx_t *ctx, uint8_t *val)
 
   ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_CTRL3, (uint8_t *)&ctrl3, 1);
   *val = ctrl3.bdu;
+
+  return ret;
+}
+
+/**
+  * @brief  Configure ODR trigger. [set]
+  *
+  * @param  ctx      read / write interface definitions
+  * @param  val      number of data in the reference period.
+  * @retval          interface status (MANDATORY: return 0 -> no Error)
+  *
+  */
+int32_t lsm6dsv16x_odr_trig_cfg_set(stmdev_ctx_t *ctx, uint8_t val)
+{
+  lsm6dsv16x_odr_trig_cfg_t odr_trig;
+  int32_t ret;
+
+  if (val >= 1U && val <= 3U) {
+    return -1;
+  }
+
+  ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_ODR_TRIG_CFG, (uint8_t *)&odr_trig, 1);
+
+  if (ret == 0)
+  {
+    odr_trig.odr_trig_nodr = val;
+    ret = lsm6dsv16x_write_reg(ctx, LSM6DSV16X_ODR_TRIG_CFG, (uint8_t *)&odr_trig, 1);
+  }
+
+  return ret;
+}
+
+/**
+  * @brief  Configure ODR trigger. [get]
+  *
+  * @param  ctx      read / write interface definitions
+  * @param  val      number of data in the reference period.
+  * @retval          interface status (MANDATORY: return 0 -> no Error)
+  *
+  */
+int32_t lsm6dsv16x_odr_trig_cfg_get(stmdev_ctx_t *ctx, uint8_t *val)
+{
+  lsm6dsv16x_odr_trig_cfg_t odr_trig;
+  int32_t ret;
+
+  ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_ODR_TRIG_CFG, (uint8_t *)&odr_trig, 1);
+  *val = odr_trig.odr_trig_nodr;
 
   return ret;
 }
@@ -5727,9 +6030,9 @@ int32_t lsm6dsv16x_sflp_game_gbias_set(stmdev_ctx_t *ctx,
   ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_CTRL1, conf_saved, 2);
   ret += lsm6dsv16x_xl_mode_set(ctx, LSM6DSV16X_XL_HIGH_PERFORMANCE_MD);
   ret += lsm6dsv16x_gy_mode_set(ctx, LSM6DSV16X_GY_HIGH_PERFORMANCE_MD);
-  if ((conf_saved[0] & 0x0FU) == LSM6DSV16X_XL_ODR_OFF)
+  if ((conf_saved[0] & 0x0FU) == LSM6DSV16X_ODR_OFF)
   {
-    ret += lsm6dsv16x_xl_data_rate_set(ctx, LSM6DSV16X_XL_ODR_AT_120Hz);
+    ret += lsm6dsv16x_xl_data_rate_set(ctx, LSM6DSV16X_ODR_AT_120Hz);
   }
 
   /* Make sure to turn the sensor-hub master off */
