@@ -2720,7 +2720,7 @@ typedef struct
   * @{
   *
   */
-#define LSM6DSV16X_EMB_ADV_PG_0              0x000
+#define LSM6DSV16X_EMB_ADV_PG_0              0x000U
 
 #define LSM6DSV16X_SFLP_GAME_GBIASX_L        0x6EU
 typedef struct
@@ -3019,7 +3019,7 @@ typedef struct
   * @{
   *
   */
-#define LSM6DSV16X_EMB_ADV_PG_1             0x100
+#define LSM6DSV16X_EMB_ADV_PG_1             0x100U
 
 #define LSM6DSV16X_FSM_LC_TIMEOUT_L         0x7AU
 typedef struct
@@ -3141,7 +3141,7 @@ typedef struct
   * @{
   *
   */
-#define LSM6DSV16X_EMB_ADV_PG_2             0x200
+#define LSM6DSV16X_EMB_ADV_PG_2             0x200U
 
 #define LSM6DSV16X_EXT_FORMAT               0x00
 typedef struct
@@ -3967,7 +3967,7 @@ int32_t lsm6dsv16x_gy_data_rate_get(stmdev_ctx_t *ctx,
 typedef enum
 {
   LSM6DSV16X_XL_HIGH_PERFORMANCE_MD   = 0x0,
-  LSM6DSV16X_XL_HIGH_ACCURANCY_ODR_MD = 0x1,
+  LSM6DSV16X_XL_HIGH_ACCURACY_ODR_MD = 0x1,
   LSM6DSV16X_XL_ODR_TRIGGERED_MD      = 0x3,
   LSM6DSV16X_XL_LOW_POWER_2_AVG_MD    = 0x4,
   LSM6DSV16X_XL_LOW_POWER_4_AVG_MD    = 0x5,
@@ -3980,7 +3980,7 @@ int32_t lsm6dsv16x_xl_mode_get(stmdev_ctx_t *ctx, lsm6dsv16x_xl_mode_t *val);
 typedef enum
 {
   LSM6DSV16X_GY_HIGH_PERFORMANCE_MD   = 0x0,
-  LSM6DSV16X_GY_HIGH_ACCURANCY_ODR_MD = 0x1,
+  LSM6DSV16X_GY_HIGH_ACCURACY_ODR_MD = 0x1,
   LSM6DSV16X_GY_SLEEP_MD              = 0x4,
   LSM6DSV16X_GY_LOW_POWER_MD          = 0x5,
 } lsm6dsv16x_gy_mode_t;
@@ -5130,8 +5130,8 @@ int32_t lsm6dsv16x_stpcnt_debounce_get(stmdev_ctx_t *ctx, uint8_t *val);
 int32_t lsm6dsv16x_stpcnt_period_set(stmdev_ctx_t *ctx, uint16_t val);
 int32_t lsm6dsv16x_stpcnt_period_get(stmdev_ctx_t *ctx, uint16_t *val);
 
-int32_t lsm6dsv16x_sflp_game_rotation_set(stmdev_ctx_t *ctx, uint16_t val);
-int32_t lsm6dsv16x_sflp_game_rotation_get(stmdev_ctx_t *ctx, uint16_t *val);
+int32_t lsm6dsv16x_sflp_game_rotation_set(stmdev_ctx_t *ctx, uint8_t val);
+int32_t lsm6dsv16x_sflp_game_rotation_get(stmdev_ctx_t *ctx, uint8_t *val);
 
 typedef struct
 {

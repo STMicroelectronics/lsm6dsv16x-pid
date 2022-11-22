@@ -756,7 +756,7 @@ int32_t lsm6dsv16x_xl_data_rate_get(stmdev_ctx_t *ctx,
   * @brief  Accelerometer operating mode selection.[set]
   *
   * @param  ctx      read / write interface definitions
-  * @param  val      XL_HIGH_PERFORMANCE_MD, XL_HIGH_ACCURANCY_ODR_MD, XL_LOW_POWER_2_AVG_MD, XL_LOW_POWER_4_AVG_MD, XL_LOW_POWER_8_AVG_MD, XL_NORMAL_MD,
+  * @param  val      XL_HIGH_PERFORMANCE_MD, XL_HIGH_ACCURACY_ODR_MD, XL_LOW_POWER_2_AVG_MD, XL_LOW_POWER_4_AVG_MD, XL_LOW_POWER_8_AVG_MD, XL_NORMAL_MD,
   * @retval          interface status (MANDATORY: return 0 -> no Error)
   *
   */
@@ -780,7 +780,7 @@ int32_t lsm6dsv16x_xl_mode_set(stmdev_ctx_t *ctx, lsm6dsv16x_xl_mode_t val)
   * @brief  Accelerometer operating mode selection.[get]
   *
   * @param  ctx      read / write interface definitions
-  * @param  val      XL_HIGH_PERFORMANCE_MD, XL_HIGH_ACCURANCY_ODR_MD, XL_LOW_POWER_2_AVG_MD, XL_LOW_POWER_4_AVG_MD, XL_LOW_POWER_8_AVG_MD, XL_NORMAL_MD,
+  * @param  val      XL_HIGH_PERFORMANCE_MD, XL_HIGH_ACCURACY_ODR_MD, XL_LOW_POWER_2_AVG_MD, XL_LOW_POWER_4_AVG_MD, XL_LOW_POWER_8_AVG_MD, XL_NORMAL_MD,
   * @retval          interface status (MANDATORY: return 0 -> no Error)
   *
   */
@@ -797,8 +797,8 @@ int32_t lsm6dsv16x_xl_mode_get(stmdev_ctx_t *ctx, lsm6dsv16x_xl_mode_t *val)
       *val = LSM6DSV16X_XL_HIGH_PERFORMANCE_MD;
       break;
 
-    case LSM6DSV16X_XL_HIGH_ACCURANCY_ODR_MD:
-      *val = LSM6DSV16X_XL_HIGH_ACCURANCY_ODR_MD;
+    case LSM6DSV16X_XL_HIGH_ACCURACY_ODR_MD:
+      *val = LSM6DSV16X_XL_HIGH_ACCURACY_ODR_MD;
       break;
 
     case LSM6DSV16X_XL_ODR_TRIGGERED_MD:
@@ -1058,7 +1058,7 @@ int32_t lsm6dsv16x_gy_data_rate_get(stmdev_ctx_t *ctx,
   * @brief  Gyroscope operating mode selection.[set]
   *
   * @param  ctx      read / write interface definitions
-  * @param  val      GY_HIGH_PERFORMANCE_MD, GY_HIGH_ACCURANCY_ODR_MD, GY_SLEEP_MD, GY_LOW_POWER_MD,
+  * @param  val      GY_HIGH_PERFORMANCE_MD, GY_HIGH_ACCURACY_ODR_MD, GY_SLEEP_MD, GY_LOW_POWER_MD,
   * @retval          interface status (MANDATORY: return 0 -> no Error)
   *
   */
@@ -1081,7 +1081,7 @@ int32_t lsm6dsv16x_gy_mode_set(stmdev_ctx_t *ctx, lsm6dsv16x_gy_mode_t val)
   * @brief  Gyroscope operating mode selection.[get]
   *
   * @param  ctx      read / write interface definitions
-  * @param  val      GY_HIGH_PERFORMANCE_MD, GY_HIGH_ACCURANCY_ODR_MD, GY_SLEEP_MD, GY_LOW_POWER_MD,
+  * @param  val      GY_HIGH_PERFORMANCE_MD, GY_HIGH_ACCURACY_ODR_MD, GY_SLEEP_MD, GY_LOW_POWER_MD,
   * @retval          interface status (MANDATORY: return 0 -> no Error)
   *
   */
@@ -1097,8 +1097,8 @@ int32_t lsm6dsv16x_gy_mode_get(stmdev_ctx_t *ctx, lsm6dsv16x_gy_mode_t *val)
       *val = LSM6DSV16X_GY_HIGH_PERFORMANCE_MD;
       break;
 
-    case LSM6DSV16X_GY_HIGH_ACCURANCY_ODR_MD:
-      *val = LSM6DSV16X_GY_HIGH_ACCURANCY_ODR_MD;
+    case LSM6DSV16X_GY_HIGH_ACCURACY_ODR_MD:
+      *val = LSM6DSV16X_GY_HIGH_ACCURACY_ODR_MD;
       break;
 
     case LSM6DSV16X_GY_SLEEP_MD:
@@ -5828,7 +5828,7 @@ static uint16_t npy_floatbits_to_halfbits(uint32_t f)
     {
       /* Inf or NaN */
       f_sig = (f & 0x007fffffu);
-      if (f_sig != 0)
+      if (f_sig != 0U)
       {
         /* NaN - propagate the flag in the significand... */
         uint16_t ret = (uint16_t)(0x7c00u + (f_sig >> 13));
@@ -5889,7 +5889,7 @@ static uint16_t npy_floatbits_to_halfbits(uint32_t f)
      * exponent giving a subnormal `f_exp = 0x38000000 >> 23 = 112`, which
      * offsets the new first bit. At most the shift can be 1+10 bits.
      */
-    f_sig >>= (113 - f_exp);
+    f_sig >>= (113U - f_exp);
     /* Handle rounding by adding 1 to the bit beyond half precision */
 #if NPY_HALF_ROUND_TIES_TO_EVEN
     /*
@@ -6001,6 +6001,7 @@ int32_t lsm6dsv16x_sflp_game_gbias_set(stmdev_ctx_t *ctx,
   /* Calculate k factor */
   switch (sflp_odr)
   {
+    default:
     case LSM6DSV16X_SFLP_15Hz:
       k = 0.04f;
       break;
@@ -6030,7 +6031,7 @@ int32_t lsm6dsv16x_sflp_game_gbias_set(stmdev_ctx_t *ctx,
   ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_CTRL1, conf_saved, 2);
   ret += lsm6dsv16x_xl_mode_set(ctx, LSM6DSV16X_XL_HIGH_PERFORMANCE_MD);
   ret += lsm6dsv16x_gy_mode_set(ctx, LSM6DSV16X_GY_HIGH_PERFORMANCE_MD);
-  if ((conf_saved[0] & 0x0FU) == LSM6DSV16X_ODR_OFF)
+  if (((uint8_t)conf_saved[0] & 0x0FU) == (uint8_t)LSM6DSV16X_ODR_OFF)
   {
     ret += lsm6dsv16x_xl_data_rate_set(ctx, LSM6DSV16X_ODR_AT_120Hz);
   }
@@ -6047,7 +6048,7 @@ int32_t lsm6dsv16x_sflp_game_gbias_set(stmdev_ctx_t *ctx,
   {
     ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_EMB_FUNC_EXEC_STATUS,
                                (uint8_t *)&emb_func_sts, 1);
-  } while (emb_func_sts.emb_func_endop != 1);
+  } while (emb_func_sts.emb_func_endop != 1U);
   ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_MAIN_MEM_BANK);
 
   // enable gbias setting
@@ -6057,7 +6058,7 @@ int32_t lsm6dsv16x_sflp_game_gbias_set(stmdev_ctx_t *ctx,
 
   /* enable algos */
   ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_EMBED_FUNC_MEM_BANK);
-  emb_func_en_saved[0] |= 0x02; /* force SFLP GAME en */
+  emb_func_en_saved[0] |= 0x02U; /* force SFLP GAME en */
   ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_EMB_FUNC_EN_A, emb_func_en_saved,
                               2);
   ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_MAIN_MEM_BANK);
@@ -6068,32 +6069,32 @@ int32_t lsm6dsv16x_sflp_game_gbias_set(stmdev_ctx_t *ctx,
   do
   {
     ret += lsm6dsv16x_flag_data_ready_get(ctx, &drdy);
-  } while (drdy.drdy_xl != 1);
+  } while (drdy.drdy_xl != 1U);
   ret += lsm6dsv16x_acceleration_raw_get(ctx, xl_data);
 
   /* force sflp initialization */
   ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_SENSOR_HUB_MEM_BANK);
-  for (i = 0; i < 3; i++)
+  for (i = 0; i < 3U; i++)
   {
     j = 0;
     data_tmp = (int32_t)xl_data[i];
     data_tmp <<= xl_fs; // shift based on current fs
-    ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SENSOR_HUB_1 + 3 * i,
+    ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SENSOR_HUB_1 + 3U * i,
                                 &data_ptr[j++], 1);
-    ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SENSOR_HUB_2 + 3 * i,
+    ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SENSOR_HUB_2 + 3U * i,
                                 &data_ptr[j++], 1);
-    ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SENSOR_HUB_3 + 3 * i, &data_ptr[j],
+    ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SENSOR_HUB_3 + 3U * i, &data_ptr[j],
                                 1);
   }
-  for (i = 0; i < 3; i++)
+  for (i = 0; i < 3U; i++)
   {
     j = 0;
     data_tmp = 0;
-    ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SENSOR_HUB_10 + 3 * i,
+    ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SENSOR_HUB_10 + 3U * i,
                                 &data_ptr[j++], 1);
-    ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SENSOR_HUB_11 + 3 * i,
+    ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SENSOR_HUB_11 + 3U * i,
                                 &data_ptr[j++], 1);
-    ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SENSOR_HUB_12 + 3 * i, &data_ptr[j],
+    ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SENSOR_HUB_12 + 3U * i, &data_ptr[j],
                                 1);
   }
   ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_MAIN_MEM_BANK);
@@ -6105,7 +6106,7 @@ int32_t lsm6dsv16x_sflp_game_gbias_set(stmdev_ctx_t *ctx,
   {
     ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_EMB_FUNC_EXEC_STATUS,
                                (uint8_t *)&emb_func_sts, 1);
-  } while (emb_func_sts.emb_func_endop != 1);
+  } while (emb_func_sts.emb_func_endop != 1U);
   ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_MAIN_MEM_BANK);
 
   /* write gbias in embedded advanced features registers */
@@ -9382,7 +9383,7 @@ int32_t lsm6dsv16x_stpcnt_period_get(stmdev_ctx_t *ctx, uint16_t *val)
   * @retval          interface status (MANDATORY: return 0 -> no Error)
   *
   */
-int32_t lsm6dsv16x_sflp_game_rotation_set(stmdev_ctx_t *ctx, uint16_t val)
+int32_t lsm6dsv16x_sflp_game_rotation_set(stmdev_ctx_t *ctx, uint8_t val)
 {
   lsm6dsv16x_emb_func_en_a_t emb_func_en_a;
   int32_t ret;
@@ -9409,7 +9410,7 @@ int32_t lsm6dsv16x_sflp_game_rotation_set(stmdev_ctx_t *ctx, uint16_t val)
   * @retval          interface status (MANDATORY: return 0 -> no Error)
   *
   */
-int32_t lsm6dsv16x_sflp_game_rotation_get(stmdev_ctx_t *ctx, uint16_t *val)
+int32_t lsm6dsv16x_sflp_game_rotation_get(stmdev_ctx_t *ctx, uint8_t *val)
 {
   lsm6dsv16x_emb_func_en_a_t emb_func_en_a;
   int32_t ret;
@@ -10200,7 +10201,7 @@ int32_t lsm6dsv16x_act_thresholds_set(stmdev_ctx_t *ctx,
   wake_up_ths.wk_ths = val->threshold;
   wake_up_dur.wake_dur = val->duration;
 
-  ret = lsm6dsv16x_write_reg(ctx, LSM6DSV16X_INACTIVITY_DUR, (uint8_t *)&inactivity_dur, 1);
+  ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_INACTIVITY_DUR, (uint8_t *)&inactivity_dur, 1);
   ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_INACTIVITY_THS, (uint8_t *)&inactivity_ths, 1);
   ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_WAKE_UP_THS, (uint8_t *)&wake_up_ths, 1);
   ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_WAKE_UP_DUR, (uint8_t *)&wake_up_dur, 1);
