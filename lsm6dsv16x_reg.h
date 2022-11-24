@@ -4672,14 +4672,14 @@ int32_t lsm6dsv16x_fsm_long_cnt_get(stmdev_ctx_t *ctx, uint16_t *val);
 
 typedef struct
 {
-  lsm6dsv16x_fsm_outs1_t fsm_outs1;
-  lsm6dsv16x_fsm_outs2_t fsm_outs2;
-  lsm6dsv16x_fsm_outs3_t fsm_outs3;
-  lsm6dsv16x_fsm_outs4_t fsm_outs4;
-  lsm6dsv16x_fsm_outs5_t fsm_outs5;
-  lsm6dsv16x_fsm_outs6_t fsm_outs6;
-  lsm6dsv16x_fsm_outs7_t fsm_outs7;
-  lsm6dsv16x_fsm_outs8_t fsm_outs8;
+  uint8_t fsm_outs1;
+  uint8_t fsm_outs2;
+  uint8_t fsm_outs3;
+  uint8_t fsm_outs4;
+  uint8_t fsm_outs5;
+  uint8_t fsm_outs6;
+  uint8_t fsm_outs7;
+  uint8_t fsm_outs8;
 } lsm6dsv16x_fsm_out_t;
 int32_t lsm6dsv16x_fsm_out_get(stmdev_ctx_t *ctx, lsm6dsv16x_fsm_out_t *val);
 
