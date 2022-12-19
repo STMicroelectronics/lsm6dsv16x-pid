@@ -6716,36 +6716,45 @@ int32_t lsm6dsv16x_ff_thresholds_get(stmdev_ctx_t *ctx,
   * @brief  It enables Machine Learning Core feature (MLC). When the Machine Learning Core is enabled the Finite State Machine (FSM) programs are executed before executing the MLC algorithms.[set]
   *
   * @param  ctx      read / write interface definitions
-  * @param  val      DISABLE, MLC_BEFORE_FSM, MLC_AFTER_FSM,
+  * @param  val      MLC_OFF, MLC_ON, MLC_BEFORE_FSM,
   * @retval          interface status (MANDATORY: return 0 -> no Error)
   *
   */
-int32_t lsm6dsv16x_mlc_mode_set(stmdev_ctx_t *ctx, lsm6dsv16x_mlc_mode_t val)
+int32_t lsm6dsv16x_mlc_set(stmdev_ctx_t *ctx, lsm6dsv16x_mlc_mode_t val)
 {
-  lsm6dsv16x_emb_func_en_b_t emb_func_en_b;
-  lsm6dsv16x_emb_func_en_a_t emb_func_en_a;
+  lsm6dsv16x_emb_func_en_b_t emb_en_b;
+  lsm6dsv16x_emb_func_en_a_t emb_en_a;
   int32_t ret;
 
   ret = lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_EMBED_FUNC_MEM_BANK);
-  if (ret == 0)
-  {
-    ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_EMB_FUNC_EN_A, (uint8_t *)&emb_func_en_a, 1);
-  }
-  if (ret == 0)
-  {
-    ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_EMB_FUNC_EN_B, (uint8_t *)&emb_func_en_b, 1);
-  }
-  emb_func_en_a.mlc_before_fsm_en = (uint8_t)val & 0x01U;
-  emb_func_en_b.mlc_en = ((uint8_t)val & 0x02U) >> 1;
-  if (ret == 0)
-  {
-    ret = lsm6dsv16x_write_reg(ctx, LSM6DSV16X_EMB_FUNC_EN_A, (uint8_t *)&emb_func_en_a, 1);
-  }
-  if (ret == 0)
-  {
 
-    ret = lsm6dsv16x_write_reg(ctx, LSM6DSV16X_EMB_FUNC_EN_B, (uint8_t *)&emb_func_en_b, 1);
+  if (ret == 0)
+  {
+    ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_EMB_FUNC_EN_A, (uint8_t *)&emb_en_a, 1);
+    ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_EMB_FUNC_EN_B, (uint8_t *)&emb_en_b, 1);
+
+    switch(val)
+    {
+      case LSM6DSV16X_MLC_OFF:
+        emb_en_a.mlc_before_fsm_en = 0;
+        emb_en_b.mlc_en = 0;
+        break;
+      case LSM6DSV16X_MLC_ON:
+        emb_en_a.mlc_before_fsm_en = 0;
+        emb_en_b.mlc_en = 1;
+        break;
+      case LSM6DSV16X_MLC_ON_BEFORE_FSM:
+        emb_en_a.mlc_before_fsm_en = 1;
+        emb_en_b.mlc_en = 0;
+        break;
+      default:
+        break;
+    }
+
+    ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_EMB_FUNC_EN_A, (uint8_t *)&emb_en_a, 1);
+    ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_EMB_FUNC_EN_B, (uint8_t *)&emb_en_b, 1);
   }
+
   ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_MAIN_MEM_BANK);
 
   return ret;
@@ -6755,45 +6764,43 @@ int32_t lsm6dsv16x_mlc_mode_set(stmdev_ctx_t *ctx, lsm6dsv16x_mlc_mode_t val)
   * @brief  It enables Machine Learning Core feature (MLC). When the Machine Learning Core is enabled the Finite State Machine (FSM) programs are executed before executing the MLC algorithms.[get]
   *
   * @param  ctx      read / write interface definitions
-  * @param  val      DISABLE, MLC_BEFORE_FSM, MLC_AFTER_FSM,
+  * @param  val      MLC_OFF, MLC_ON, MLC_BEFORE_FSM,
   * @retval          interface status (MANDATORY: return 0 -> no Error)
   *
   */
-int32_t lsm6dsv16x_mlc_mode_get(stmdev_ctx_t *ctx, lsm6dsv16x_mlc_mode_t *val)
+int32_t lsm6dsv16x_mlc_get(stmdev_ctx_t *ctx, lsm6dsv16x_mlc_mode_t *val)
 {
-  lsm6dsv16x_emb_func_en_a_t emb_func_en_a;
-  lsm6dsv16x_emb_func_en_b_t emb_func_en_b;
+  lsm6dsv16x_emb_func_en_b_t emb_en_b;
+  lsm6dsv16x_emb_func_en_a_t emb_en_a;
   int32_t ret;
 
   ret = lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_EMBED_FUNC_MEM_BANK);
+
   if (ret == 0)
   {
-    ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_EMB_FUNC_EN_A, (uint8_t *)&emb_func_en_a, 1);
+    ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_EMB_FUNC_EN_A, (uint8_t *)&emb_en_a, 1);
+    ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_EMB_FUNC_EN_B, (uint8_t *)&emb_en_b, 1);
+
+    if (emb_en_a.mlc_before_fsm_en == 0U && emb_en_b.mlc_en == 0U)
+    {
+      *val = LSM6DSV16X_MLC_OFF;
+    }
+    else if (emb_en_a.mlc_before_fsm_en == 0U && emb_en_b.mlc_en == 1U)
+    {
+      *val = LSM6DSV16X_MLC_ON;
+    }
+    else if (emb_en_a.mlc_before_fsm_en == 1U)
+    {
+      *val = LSM6DSV16X_MLC_ON_BEFORE_FSM;
+    }
+    else
+    {
+      /* Do nothing */
+    }
   }
-  if (ret == 0)
-  {
-    ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_EMB_FUNC_EN_B, (uint8_t *)&emb_func_en_b, 1);
-  }
+
   ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_MAIN_MEM_BANK);
 
-  switch ((emb_func_en_b.mlc_en << 1) + emb_func_en_a.mlc_before_fsm_en)
-  {
-    case LSM6DSV16X_DISABLE:
-      *val = LSM6DSV16X_DISABLE;
-      break;
-
-    case LSM6DSV16X_MLC_BEFORE_FSM:
-      *val = LSM6DSV16X_MLC_BEFORE_FSM;
-      break;
-
-    case LSM6DSV16X_MLC_AFTER_FSM:
-      *val = LSM6DSV16X_MLC_AFTER_FSM;
-      break;
-
-    default:
-      *val = LSM6DSV16X_DISABLE;
-      break;
-  }
   return ret;
 }
 

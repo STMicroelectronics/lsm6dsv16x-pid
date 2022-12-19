@@ -4800,12 +4800,12 @@ int32_t lsm6dsv16x_ff_thresholds_get(stmdev_ctx_t *ctx,
 
 typedef enum
 {
-  LSM6DSV16X_DISABLE        = 0x0,
-  LSM6DSV16X_MLC_BEFORE_FSM = 0x1,
-  LSM6DSV16X_MLC_AFTER_FSM  = 0x2,
+  LSM6DSV16X_MLC_OFF                             = 0x0,
+  LSM6DSV16X_MLC_ON                              = 0x1,
+  LSM6DSV16X_MLC_ON_BEFORE_FSM                   = 0x2,
 } lsm6dsv16x_mlc_mode_t;
-int32_t lsm6dsv16x_mlc_mode_set(stmdev_ctx_t *ctx, lsm6dsv16x_mlc_mode_t val);
-int32_t lsm6dsv16x_mlc_mode_get(stmdev_ctx_t *ctx, lsm6dsv16x_mlc_mode_t *val);
+int32_t lsm6dsv16x_mlc_set(stmdev_ctx_t *ctx, lsm6dsv16x_mlc_mode_t val);
+int32_t lsm6dsv16x_mlc_get(stmdev_ctx_t *ctx, lsm6dsv16x_mlc_mode_t *val);
 
 typedef enum
 {
