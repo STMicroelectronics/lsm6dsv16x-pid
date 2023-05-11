@@ -7864,14 +7864,13 @@ int32_t lsm6dsv16x_sh_master_interface_pull_up_get(stmdev_ctx_t *ctx,
   * @retval          interface status (MANDATORY: return 0 -> no Error)
   *
   */
-int32_t lsm6dsv16x_sh_read_data_raw_get(stmdev_ctx_t *ctx,
-                                        lsm6dsv16x_emb_sh_read_t *val,
+int32_t lsm6dsv16x_sh_read_data_raw_get(stmdev_ctx_t *ctx, uint8_t *val,
                                         uint8_t len)
 {
   int32_t ret;
 
   ret = lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_SENSOR_HUB_MEM_BANK);
-  ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_SENSOR_HUB_1, (uint8_t *) val, len);
+  ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_SENSOR_HUB_1, val, len);
   ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_MAIN_MEM_BANK);
 
   return ret;
