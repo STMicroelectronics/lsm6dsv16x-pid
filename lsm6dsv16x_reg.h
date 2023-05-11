@@ -4484,17 +4484,17 @@ int32_t lsm6dsv16x_fifo_mlc_batch_get(stmdev_ctx_t *ctx, uint8_t *val);
 int32_t lsm6dsv16x_fifo_mlc_filt_batch_set(stmdev_ctx_t *ctx, uint8_t val);
 int32_t lsm6dsv16x_fifo_mlc_filt_batch_get(stmdev_ctx_t *ctx, uint8_t *val);
 
-int32_t lsm6dsv16x_fifo_batch_sh_slave_0_set(stmdev_ctx_t *ctx, uint8_t val);
-int32_t lsm6dsv16x_fifo_batch_sh_slave_0_get(stmdev_ctx_t *ctx, uint8_t *val);
+int32_t lsm6dsv16x_fifo_sh_batch_slave_0_set(stmdev_ctx_t *ctx, uint8_t val);
+int32_t lsm6dsv16x_fifo_sh_batch_slave_0_get(stmdev_ctx_t *ctx, uint8_t *val);
 
-int32_t lsm6dsv16x_fifo_batch_sh_slave_1_set(stmdev_ctx_t *ctx, uint8_t val);
-int32_t lsm6dsv16x_fifo_batch_sh_slave_1_get(stmdev_ctx_t *ctx, uint8_t *val);
+int32_t lsm6dsv16x_fifo_sh_batch_slave_1_set(stmdev_ctx_t *ctx, uint8_t val);
+int32_t lsm6dsv16x_fifo_sh_batch_slave_1_get(stmdev_ctx_t *ctx, uint8_t *val);
 
-int32_t lsm6dsv16x_fifo_batch_sh_slave_2_set(stmdev_ctx_t *ctx, uint8_t val);
-int32_t lsm6dsv16x_fifo_batch_sh_slave_2_get(stmdev_ctx_t *ctx, uint8_t *val);
+int32_t lsm6dsv16x_fifo_sh_batch_slave_2_set(stmdev_ctx_t *ctx, uint8_t val);
+int32_t lsm6dsv16x_fifo_sh_batch_slave_2_get(stmdev_ctx_t *ctx, uint8_t *val);
 
-int32_t lsm6dsv16x_fifo_batch_sh_slave_3_set(stmdev_ctx_t *ctx, uint8_t val);
-int32_t lsm6dsv16x_fifo_batch_sh_slave_3_get(stmdev_ctx_t *ctx, uint8_t *val);
+int32_t lsm6dsv16x_fifo_sh_batch_slave_3_set(stmdev_ctx_t *ctx, uint8_t val);
+int32_t lsm6dsv16x_fifo_sh_batch_slave_3_get(stmdev_ctx_t *ctx, uint8_t *val);
 
 typedef struct
 {
