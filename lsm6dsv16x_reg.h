@@ -5063,6 +5063,8 @@ int32_t lsm6dsv16x_sh_slv2_cfg_read(stmdev_ctx_t *ctx,
 int32_t lsm6dsv16x_sh_slv3_cfg_read(stmdev_ctx_t *ctx,
                                     lsm6dsv16x_sh_cfg_read_t *val);
 
+int32_t lsm6dsv16x_sh_status_get(stmdev_ctx_t *ctx,
+                                 lsm6dsv16x_status_master_t *val);
 
 int32_t lsm6dsv16x_ui_sdo_pull_up_set(stmdev_ctx_t *ctx, uint8_t val);
 int32_t lsm6dsv16x_ui_sdo_pull_up_get(stmdev_ctx_t *ctx, uint8_t *val);

@@ -8518,6 +8518,26 @@ exit:
 }
 
 /**
+  * @brief  Sensor hub source register.[get]
+  *
+  * @param  ctx      read / write interface definitions
+  * @param  val      union of registers from STATUS_MASTER to
+  * @retval          interface status (MANDATORY: return 0 -> no Error)
+  *
+  */
+int32_t lsm6dsv16x_sh_status_get(stmdev_ctx_t *ctx,
+                                 lsm6dsv16x_status_master_t *val)
+{
+  int32_t ret;
+
+  ret = lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_SENSOR_HUB_MEM_BANK);
+  ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_STATUS_MASTER, (uint8_t *) val, 1);
+  ret = lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_MAIN_MEM_BANK);
+
+  return ret;
+}
+
+/**
   * @}
   *
   */
