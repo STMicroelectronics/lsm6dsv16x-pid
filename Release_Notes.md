@@ -56,7 +56,7 @@ This directory contains the LSM6DSV16X component drivers.
 
 </div>
 
-<input type="checkbox" id="collapse-section1" checked aria-hidden="true">
+<input type="checkbox" id="collapse-section1" aria-hidden="true">
 <label for="collapse-section1" aria-hidden="true">V2.1.0 / 15-May-2023</label>
 <div>
 
@@ -66,6 +66,18 @@ This directory contains the LSM6DSV16X component drivers.
 - sensor_hub: add sh_status_get() API
 - sensor_hub: change sh_read_data_raw_get() API signature
 - review read/write reg ret value checks
+
+##
+
+</div>
+
+<input type="checkbox" id="collapse-section1" checked aria-hidden="true">
+<label for="collapse-section1" aria-hidden="true">V2.1.1 / 18-May-2023</label>
+<div>
+
+## Main changes
+
+- read sh status from mainpage
 
 ##
 
