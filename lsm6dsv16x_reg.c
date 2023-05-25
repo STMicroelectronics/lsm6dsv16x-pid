@@ -4144,24 +4144,24 @@ int32_t lsm6dsv16x_fifo_mlc_filt_batch_get(stmdev_ctx_t *ctx, uint8_t *val)
 }
 
 /**
-  * @brief  Enable FIFO data batching of first slave.[set]
+  * @brief  Enable FIFO data batching of slave idx.[set]
   *
   * @param  ctx      read / write interface definitions
-  * @param  val      Enable FIFO data batching of first slave.
+  * @param  val      Enable FIFO data batching of slave idx.
   * @retval          interface status (MANDATORY: return 0 -> no Error)
   *
   */
-int32_t lsm6dsv16x_fifo_sh_batch_slave_0_set(stmdev_ctx_t *ctx, uint8_t val)
+int32_t lsm6dsv16x_fifo_sh_batch_slave_set(stmdev_ctx_t *ctx, uint8_t idx, uint8_t val)
 {
-  lsm6dsv16x_slv0_config_t slv0_config;
+  lsm6dsv16x_slv0_config_t slv_config;
   int32_t ret;
 
   ret = lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_SENSOR_HUB_MEM_BANK);
   if (ret != 0) { return ret; }
 
-  ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_SLV0_CONFIG, (uint8_t *)&slv0_config, 1);
-  slv0_config.batch_ext_sens_0_en = val;
-  ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SLV0_CONFIG, (uint8_t *)&slv0_config, 1);
+  ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_SLV0_CONFIG + 3*idx, (uint8_t *)&slv_config, 1);
+  slv_config.batch_ext_sens_0_en = val;
+  ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SLV0_CONFIG + 3*idx, (uint8_t *)&slv_config, 1);
 
   ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_MAIN_MEM_BANK);
 
@@ -4169,170 +4169,23 @@ int32_t lsm6dsv16x_fifo_sh_batch_slave_0_set(stmdev_ctx_t *ctx, uint8_t val)
 }
 
 /**
-  * @brief  Enable FIFO data batching of first slave.[get]
+  * @brief  Enable FIFO data batching of slave idx.[get]
   *
   * @param  ctx      read / write interface definitions
-  * @param  val      Enable FIFO data batching of first slave.
+  * @param  val      Enable FIFO data batching of slave idx.
   * @retval          interface status (MANDATORY: return 0 -> no Error)
   *
   */
-int32_t lsm6dsv16x_fifo_sh_batch_slave_0_get(stmdev_ctx_t *ctx, uint8_t *val)
+int32_t lsm6dsv16x_fifo_sh_batch_slave_get(stmdev_ctx_t *ctx, uint8_t idx, uint8_t *val)
 {
-  lsm6dsv16x_slv0_config_t slv0_config;
+  lsm6dsv16x_slv0_config_t slv_config;
   int32_t ret;
 
   ret = lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_SENSOR_HUB_MEM_BANK);
   if (ret != 0) { return ret; }
 
-  ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_SLV0_CONFIG, (uint8_t *)&slv0_config, 1);
-  *val = slv0_config.batch_ext_sens_0_en;
-
-  ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_MAIN_MEM_BANK);
-
-  return ret;
-}
-
-/**
-  * @brief  Enable FIFO data batching of second slave.[set]
-  *
-  * @param  ctx      read / write interface definitions
-  * @param  val      Enable FIFO data batching of second slave.
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
-  *
-  */
-int32_t lsm6dsv16x_fifo_sh_batch_slave_1_set(stmdev_ctx_t *ctx, uint8_t val)
-{
-  lsm6dsv16x_slv1_config_t slv1_config;
-  int32_t ret;
-
-  ret = lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_SENSOR_HUB_MEM_BANK);
-  if (ret != 0) { return ret; }
-
-  ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_SLV1_CONFIG, (uint8_t *)&slv1_config, 1);
-  slv1_config.batch_ext_sens_1_en = val;
-  ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SLV1_CONFIG, (uint8_t *)&slv1_config, 1);
-
-  ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_MAIN_MEM_BANK);
-
-  return ret;
-}
-
-/**
-  * @brief  Enable FIFO data batching of second slave.[get]
-  *
-  * @param  ctx      read / write interface definitions
-  * @param  val      Enable FIFO data batching of second slave.
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
-  *
-  */
-int32_t lsm6dsv16x_fifo_sh_batch_slave_1_get(stmdev_ctx_t *ctx, uint8_t *val)
-{
-  lsm6dsv16x_slv1_config_t slv1_config;
-  int32_t ret;
-
-  ret = lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_SENSOR_HUB_MEM_BANK);
-  if (ret != 0) { return ret; }
-
-  ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_SLV1_CONFIG, (uint8_t *)&slv1_config, 1);
-  *val = slv1_config.batch_ext_sens_1_en;
-
-  ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_MAIN_MEM_BANK);
-
-  return ret;
-}
-
-/**
-  * @brief  Enable FIFO data batching of third slave.[set]
-  *
-  * @param  ctx      read / write interface definitions
-  * @param  val      Enable FIFO data batching of third slave.
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
-  *
-  */
-int32_t lsm6dsv16x_fifo_sh_batch_slave_2_set(stmdev_ctx_t *ctx, uint8_t val)
-{
-  lsm6dsv16x_slv2_config_t slv2_config;
-  int32_t ret;
-
-  ret = lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_SENSOR_HUB_MEM_BANK);
-  if (ret != 0) { return ret; }
-
-  ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_SLV2_CONFIG, (uint8_t *)&slv2_config, 1);
-  slv2_config.batch_ext_sens_2_en = val;
-  ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SLV2_CONFIG, (uint8_t *)&slv2_config, 1);
-
-  ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_MAIN_MEM_BANK);
-
-  return ret;
-}
-
-/**
-  * @brief  Enable FIFO data batching of third slave.[get]
-  *
-  * @param  ctx      read / write interface definitions
-  * @param  val      Enable FIFO data batching of third slave.
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
-  *
-  */
-int32_t lsm6dsv16x_fifo_sh_batch_slave_2_get(stmdev_ctx_t *ctx, uint8_t *val)
-{
-  lsm6dsv16x_slv2_config_t slv2_config;
-  int32_t ret;
-
-  ret = lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_SENSOR_HUB_MEM_BANK);
-  if (ret != 0) { return ret; }
-
-  ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_SLV2_CONFIG, (uint8_t *)&slv2_config, 1);
-  *val = slv2_config.batch_ext_sens_2_en;
-
-  ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_MAIN_MEM_BANK);
-
-  return ret;
-}
-
-/**
-  * @brief  Enable FIFO data batching of fourth slave.[set]
-  *
-  * @param  ctx      read / write interface definitions
-  * @param  val      Enable FIFO data batching of fourth slave.
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
-  *
-  */
-int32_t lsm6dsv16x_fifo_sh_batch_slave_3_set(stmdev_ctx_t *ctx, uint8_t val)
-{
-  lsm6dsv16x_slv3_config_t slv3_config;
-  int32_t ret;
-
-  ret = lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_SENSOR_HUB_MEM_BANK);
-  if (ret != 0) { return ret; }
-
-  ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_SLV3_CONFIG, (uint8_t *)&slv3_config, 1);
-  slv3_config.batch_ext_sens_3_en = val;
-  ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SLV3_CONFIG, (uint8_t *)&slv3_config, 1);
-
-  ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_MAIN_MEM_BANK);
-
-  return ret;
-}
-
-/**
-  * @brief  Enable FIFO data batching of fourth slave.[get]
-  *
-  * @param  ctx      read / write interface definitions
-  * @param  val      Enable FIFO data batching of fourth slave.
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
-  *
-  */
-int32_t lsm6dsv16x_fifo_sh_batch_slave_3_get(stmdev_ctx_t *ctx, uint8_t *val)
-{
-  lsm6dsv16x_slv3_config_t slv3_config;
-  int32_t ret;
-
-  ret = lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_SENSOR_HUB_MEM_BANK);
-  if (ret != 0) { return ret; }
-
-  ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_SLV3_CONFIG, (uint8_t *)&slv3_config, 1);
-  *val = slv3_config.batch_ext_sens_3_en;
+  ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_SLV0_CONFIG + 3*idx, (uint8_t *)&slv_config, 1);
+  *val = slv_config.batch_ext_sens_0_en;
 
   ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_MAIN_MEM_BANK);
 
