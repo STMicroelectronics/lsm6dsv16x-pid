@@ -4159,9 +4159,9 @@ int32_t lsm6dsv16x_fifo_sh_batch_slave_set(stmdev_ctx_t *ctx, uint8_t idx, uint8
   ret = lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_SENSOR_HUB_MEM_BANK);
   if (ret != 0) { return ret; }
 
-  ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_SLV0_CONFIG + 3*idx, (uint8_t *)&slv_config, 1);
+  ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_SLV0_CONFIG + idx*3U, (uint8_t *)&slv_config, 1);
   slv_config.batch_ext_sens_0_en = val;
-  ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SLV0_CONFIG + 3*idx, (uint8_t *)&slv_config, 1);
+  ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SLV0_CONFIG + idx*3U, (uint8_t *)&slv_config, 1);
 
   ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_MAIN_MEM_BANK);
 
@@ -4184,7 +4184,7 @@ int32_t lsm6dsv16x_fifo_sh_batch_slave_get(stmdev_ctx_t *ctx, uint8_t idx, uint8
   ret = lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_SENSOR_HUB_MEM_BANK);
   if (ret != 0) { return ret; }
 
-  ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_SLV0_CONFIG + 3*idx, (uint8_t *)&slv_config, 1);
+  ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_SLV0_CONFIG + idx*3U, (uint8_t *)&slv_config, 1);
   *val = slv_config.batch_ext_sens_0_en;
 
   ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_MAIN_MEM_BANK);
@@ -8215,20 +8215,20 @@ int32_t lsm6dsv16x_sh_slv_cfg_read(stmdev_ctx_t *ctx, uint8_t idx,
 
   slv_add.slave0_add = val->slv_add;
   slv_add.rw_0 = 1;
-  ret = lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SLV0_ADD + idx*3,
+  ret = lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SLV0_ADD + idx*3U,
                              (uint8_t *)&slv_add, 1);
   if (ret != 0) { goto exit; }
 
-  ret = lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SLV0_SUBADD + idx*3,
+  ret = lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SLV0_SUBADD + idx*3U,
                              &(val->slv_subadd), 1);
   if (ret != 0) { goto exit; }
 
-  ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_SLV0_CONFIG + idx*3,
+  ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_SLV0_CONFIG + idx*3U,
                             (uint8_t *)&slv_config, 1);
   if (ret != 0) { goto exit; }
 
   slv_config.slave0_numop = val->slv_len;
-  ret = lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SLV0_CONFIG + idx*3,
+  ret = lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SLV0_CONFIG + idx*3U,
                              (uint8_t *)&slv_config, 1);
 
 exit:
