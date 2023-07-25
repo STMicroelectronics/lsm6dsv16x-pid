@@ -174,6 +174,11 @@ float_t lsm6dsv16x_from_lsb_to_nsec(uint32_t lsb)
   return ((float_t)lsb * 21750.0f);
 }
 
+float_t lsm6dsv16x_from_lsb_to_mv(int16_t lsb)
+{
+  return ((float_t)lsb) / 78.0f;
+}
+
 /**
   * @}
   *
