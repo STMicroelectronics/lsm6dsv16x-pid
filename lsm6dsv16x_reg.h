@@ -4036,7 +4036,7 @@ typedef enum
   LSM6DSV16X_500dps  = 0x2,
   LSM6DSV16X_1000dps = 0x3,
   LSM6DSV16X_2000dps = 0x4,
-  LSM6DSV16X_4000dps = 0x5,
+  LSM6DSV16X_4000dps = 0xc,
 } lsm6dsv16x_gy_full_scale_t;
 int32_t lsm6dsv16x_gy_full_scale_set(stmdev_ctx_t *ctx,
                                      lsm6dsv16x_gy_full_scale_t val);
