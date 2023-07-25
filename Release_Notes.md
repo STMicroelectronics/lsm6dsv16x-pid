@@ -83,7 +83,7 @@ This directory contains the LSM6DSV16X component drivers.
 
 </div>
 
-<input type="checkbox" id="collapse-section5" checked aria-hidden="true">
+<input type="checkbox" id="collapse-section5" aria-hidden="true">
 <label for="collapse-section5" aria-hidden="true">V2.2.0 / 23-May-2023</label>
 <div>
 
@@ -92,6 +92,19 @@ This directory contains the LSM6DSV16X component drivers.
 - Use a single lsm6dsv16x_sh_slv_cfg_read() API for all targets
 - Use a single lsm6dsv16x_fifo_sh_batch_slave_xxx() API for all targets
 - Fix MISRA errors
+
+##
+
+</div>
+
+<input type="checkbox" id="collapse-section6" checked aria-hidden="true">
+<label for="collapse-section6" aria-hidden="true">V2.2.1 / 25-July-2023</label>
+<div>
+
+## Main changes
+
+- ah_qvar: Add API to convert from LSB to mV
+- Fix gyro FS 4000dps value typo error
 
 ##
 
