@@ -5330,8 +5330,8 @@ int32_t lsm6dsv16x_fsm_mode_set(stmdev_ctx_t *ctx, lsm6dsv16x_fsm_mode_t val)
   ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_FSM_ENABLE, (uint8_t *)&fsm_enable, 1);
   if (ret != 0) { goto exit; }
 
-  if ((val.fsm1_en | val.fsm2_en | val.fsm1_en | val.fsm1_en
-       | val.fsm1_en | val.fsm2_en | val.fsm1_en | val.fsm1_en) == PROPERTY_ENABLE)
+  if ((val.fsm1_en | val.fsm2_en | val.fsm3_en | val.fsm4_en
+       | val.fsm5_en | val.fsm6_en | val.fsm7_en | val.fsm8_en) == PROPERTY_ENABLE)
   {
     emb_func_en_b.fsm_en = PROPERTY_ENABLE;
   }
