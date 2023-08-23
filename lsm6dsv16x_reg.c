@@ -2722,7 +2722,7 @@ int32_t lsm6dsv16x_den_conf_get(stmdev_ctx_t *ctx, lsm6dsv16x_den_conf_t *val)
   val->den_y = den.den_y;
   val->den_x = den.den_x;
 
-  if ((den.den_z | den.den_z | den.den_z) == PROPERTY_ENABLE)
+  if ((den.den_x | den.den_y | den.den_z) == PROPERTY_ENABLE)
   {
     if (den.den_xl_g == PROPERTY_DISABLE && den.den_xl_en == PROPERTY_ENABLE)
     {
