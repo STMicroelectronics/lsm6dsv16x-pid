@@ -4178,6 +4178,7 @@ typedef struct
   uint8_t drdy_xl              : 1;
   uint8_t drdy_g               : 1;
   uint8_t drdy_g_eis           : 1;
+  uint8_t drdy_temp            : 1;
   uint8_t fifo_th              : 1;
   uint8_t fifo_ovr             : 1;
   uint8_t fifo_full            : 1;
