@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2022 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2024 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
@@ -3603,7 +3603,7 @@ typedef struct
   */
 
 /**
-  * @defgroup LSM6DSO_Register_Union
+  * @defgroup LSM6DSV_Register_Union
   * @brief    This union group all the registers having a bit-field
   *           description.
   *           This union is useful but it's not needed by the driver.

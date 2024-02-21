@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2022 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2024 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
@@ -826,6 +826,7 @@ int32_t lsm6dsv16x_gy_data_rate_set(const stmdev_ctx_t *ctx,
   int32_t ret;
 
   ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_CTRL2, (uint8_t *)&ctrl2, 1);
+
   ctrl2.odr_g = (uint8_t)val & 0x0Fu;
   ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_CTRL2, (uint8_t *)&ctrl2, 1);
   if (ret != 0) { return ret; }
@@ -1423,7 +1424,7 @@ int32_t lsm6dsv16x_gy_full_scale_get(const stmdev_ctx_t *ctx,
   * @brief  Accelerometer full-scale selection.[set]
   *
   * @param  ctx      read / write interface definitions
-  * @param  val      2g, 4g, 8g, 16g,
+  * @param  val      lsm6dsv16x_xl_full_scale_t
   * @retval          interface status (MANDATORY: return 0 -> no Error)
   *
   */
@@ -1448,7 +1449,7 @@ int32_t lsm6dsv16x_xl_full_scale_set(const stmdev_ctx_t *ctx,
   * @brief  Accelerometer full-scale selection.[get]
   *
   * @param  ctx      read / write interface definitions
-  * @param  val      2g, 4g, 8g, 16g,
+  * @param  val      lsm6dsv16x_xl_full_scale_t
   * @retval          interface status (MANDATORY: return 0 -> no Error)
   *
   */
@@ -2101,7 +2102,6 @@ int32_t lsm6dsv16x_all_sources_get(const stmdev_ctx_t *ctx,
   val->mlc2 = mlc_status_mainpage.is_mlc2;
   val->mlc3 = mlc_status_mainpage.is_mlc3;
   val->mlc4 = mlc_status_mainpage.is_mlc4;
-
 
   /* embedded func */
   ret = lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_EMBED_FUNC_MEM_BANK);
@@ -3866,14 +3866,7 @@ int32_t lsm6dsv16x_fifo_status_get(const stmdev_ctx_t *ctx,
   * @brief  FIFO data output[get]
   *
   * @param  ctx      read / write interface definitions
-  * @param  val      FIFO_EMPTY, GY_NC_TAG, XL_NC_TAG, TIMESTAMP_TAG,
-                     TEMPERATURE_TAG, CFG_CHANGE_TAG, XL_NC_T_2_TAG,
-                     XL_NC_T_1_TAG, XL_2XC_TAG, XL_3XC_TAG, GY_NC_T_2_TAG,
-                     GY_NC_T_1_TAG, GY_2XC_TAG, GY_3XC_TAG, SENSORHUB_SLAVE0_TAG,
-                     SENSORHUB_SLAVE1_TAG, SENSORHUB_SLAVE2_TAG, SENSORHUB_SLAVE3_TAG,
-                     STEP_COUNTER_TAG, SFLP_GAME_ROTATION_VECTOR_TAG, SFLP_GYROSCOPE_BIAS_TAG,
-                     SFLP_GRAVITY_VECTOR_TAG, SENSORHUB_NACK_TAG, MLC_RESULT_TAG,
-                     MLC_FILTER, MLC_FEATURE, XL_DUAL_CORE, GY_ENHANCED_EIS,
+  * @param  val      lsm6dsv16x_fifo_out_raw_t
   * @retval          interface status (MANDATORY: return 0 -> no Error)
   *
   */
@@ -6540,7 +6533,9 @@ int32_t lsm6dsv16x_ff_thresholds_get(const stmdev_ctx_t *ctx,
   */
 
 /**
-  * @brief  It enables Machine Learning Core feature (MLC). When the Machine Learning Core is enabled the Finite State Machine (FSM) programs are executed before executing the MLC algorithms.[set]
+  * @brief  It enables Machine Learning Core feature (MLC).
+  *         When the Machine Learning Core is enabled the Finite State Machine (FSM)
+  *         programs are executed before executing the MLC algorithms.[set]
   *
   * @param  ctx      read / write interface definitions
   * @param  val      MLC_OFF, MLC_ON, MLC_BEFORE_FSM,
@@ -6586,7 +6581,9 @@ exit:
 }
 
 /**
-  * @brief  It enables Machine Learning Core feature (MLC). When the Machine Learning Core is enabled the Finite State Machine (FSM) programs are executed before executing the MLC algorithms.[get]
+  * @brief  It enables Machine Learning Core feature (MLC).
+  *         When the Machine Learning Core is enabled the Finite State Machine (FSM)
+  *         programs are executed before executing the MLC algorithms.[get]
   *
   * @param  ctx      read / write interface definitions
   * @param  val      MLC_OFF, MLC_ON, MLC_BEFORE_FSM,
@@ -7226,7 +7223,7 @@ int32_t lsm6dsv16x_ois_gy_full_scale_get(const stmdev_ctx_t *ctx,
   * @brief  Selects accelerometer OIS channel full-scale.[set]
   *
   * @param  ctx      read / write interface definitions
-  * @param  val      OIS_2g, OIS_4g, OIS_8g, OIS_16g,
+  * @param  val      lsm6dsv16x_ois_xl_full_scale_t
   * @retval          interface status (MANDATORY: return 0 -> no Error)
   *
   */
@@ -7250,7 +7247,7 @@ int32_t lsm6dsv16x_ois_xl_full_scale_set(const stmdev_ctx_t *ctx,
   * @brief  Selects accelerometer OIS channel full-scale.[get]
   *
   * @param  ctx      read / write interface definitions
-  * @param  val      OIS_2g, OIS_4g, OIS_8g, OIS_16g,
+  * @param  val      lsm6dsv16x_ois_xl_full_scale_t
   * @retval          interface status (MANDATORY: return 0 -> no Error)
   *
   */
