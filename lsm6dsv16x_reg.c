@@ -1863,11 +1863,13 @@ int32_t lsm6dsv16x_ois_gy_self_test_get(const stmdev_ctx_t *ctx,
       break;
 
     case LSM6DSV16X_OIS_GY_ST_POSITIVE:
-      *val = (spi2_int_ois.st_ois_clampdis == 1U) ? LSM6DSV16X_OIS_GY_ST_CLAMP_POS : LSM6DSV16X_OIS_GY_ST_POSITIVE;
+      *val = (spi2_int_ois.st_ois_clampdis == 1U) ? LSM6DSV16X_OIS_GY_ST_CLAMP_POS :
+             LSM6DSV16X_OIS_GY_ST_POSITIVE;
       break;
 
     case LSM6DSV16X_OIS_GY_ST_NEGATIVE:
-      *val = (spi2_int_ois.st_ois_clampdis == 1U) ? LSM6DSV16X_OIS_GY_ST_CLAMP_NEG : LSM6DSV16X_OIS_GY_ST_NEGATIVE;
+      *val = (spi2_int_ois.st_ois_clampdis == 1U) ? LSM6DSV16X_OIS_GY_ST_CLAMP_NEG :
+             LSM6DSV16X_OIS_GY_ST_NEGATIVE;
       break;
 
     default:
@@ -6643,7 +6645,8 @@ int32_t lsm6dsv16x_fsm_long_cnt_timeout_set(const stmdev_ctx_t *ctx, uint16_t va
 
   buff[1] = (uint8_t)(val / 256U);
   buff[0] = (uint8_t)(val - (buff[1] * 256U));
-  ret = lsm6dsv16x_ln_pg_write(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_FSM_LC_TIMEOUT_L, (uint8_t *)&buff[0], 2);
+  ret = lsm6dsv16x_ln_pg_write(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_FSM_LC_TIMEOUT_L,
+                               (uint8_t *)&buff[0], 2);
 
   return ret;
 }
@@ -6661,7 +6664,8 @@ int32_t lsm6dsv16x_fsm_long_cnt_timeout_get(const stmdev_ctx_t *ctx, uint16_t *v
   uint8_t buff[2];
   int32_t ret;
 
-  ret = lsm6dsv16x_ln_pg_read(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_FSM_LC_TIMEOUT_L, &buff[0], 2);
+  ret = lsm6dsv16x_ln_pg_read(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_FSM_LC_TIMEOUT_L, &buff[0],
+                              2);
   if (ret != 0)
   {
     return ret;
@@ -6686,11 +6690,13 @@ int32_t lsm6dsv16x_fsm_number_of_programs_set(const stmdev_ctx_t *ctx, uint8_t v
   lsm6dsv16x_fsm_programs_t fsm_programs;
   int32_t ret;
 
-  ret = lsm6dsv16x_ln_pg_read(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_FSM_PROGRAMS, (uint8_t *)&fsm_programs, 1);
+  ret = lsm6dsv16x_ln_pg_read(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_FSM_PROGRAMS,
+                              (uint8_t *)&fsm_programs, 1);
   if (ret == 0)
   {
     fsm_programs.fsm_n_prog = val;
-    ret = lsm6dsv16x_ln_pg_write(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_FSM_PROGRAMS, (uint8_t *)&fsm_programs, 1);
+    ret = lsm6dsv16x_ln_pg_write(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_FSM_PROGRAMS,
+                                 (uint8_t *)&fsm_programs, 1);
   }
 
   return ret;
@@ -6709,7 +6715,8 @@ int32_t lsm6dsv16x_fsm_number_of_programs_get(const stmdev_ctx_t *ctx, uint8_t *
   lsm6dsv16x_fsm_programs_t fsm_programs;
   int32_t ret;
 
-  ret = lsm6dsv16x_ln_pg_read(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_FSM_PROGRAMS, (uint8_t *)&fsm_programs, 1);
+  ret = lsm6dsv16x_ln_pg_read(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_FSM_PROGRAMS,
+                              (uint8_t *)&fsm_programs, 1);
   *val = fsm_programs.fsm_n_prog;
 
   return ret;
@@ -6730,7 +6737,8 @@ int32_t lsm6dsv16x_fsm_start_address_set(const stmdev_ctx_t *ctx, uint16_t val)
 
   buff[1] = (uint8_t)(val / 256U);
   buff[0] = (uint8_t)(val - (buff[1] * 256U));
-  ret = lsm6dsv16x_ln_pg_write(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_FSM_START_ADD_L, (uint8_t *)&buff[0], 2);
+  ret = lsm6dsv16x_ln_pg_write(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_FSM_START_ADD_L,
+                               (uint8_t *)&buff[0], 2);
 
   return ret;
 }
@@ -7149,7 +7157,8 @@ int32_t lsm6dsv16x_mlc_ext_sens_sensitivity_set(const stmdev_ctx_t *ctx, uint16_
   buff[1] = (uint8_t)(val / 256U);
   buff[0] = (uint8_t)(val - (buff[1] * 256U));
 
-  ret = lsm6dsv16x_ln_pg_write(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_MLC_EXT_SENSITIVITY_L, (uint8_t *)&buff[0], 2);
+  ret = lsm6dsv16x_ln_pg_write(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_MLC_EXT_SENSITIVITY_L,
+                               (uint8_t *)&buff[0], 2);
 
   return ret;
 }
@@ -7168,7 +7177,8 @@ int32_t lsm6dsv16x_mlc_ext_sens_sensitivity_get(const stmdev_ctx_t *ctx,
   uint8_t buff[2];
   int32_t ret;
 
-  ret = lsm6dsv16x_ln_pg_read(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_MLC_EXT_SENSITIVITY_L, &buff[0], 2);
+  ret = lsm6dsv16x_ln_pg_read(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_MLC_EXT_SENSITIVITY_L,
+                              &buff[0], 2);
   if (ret != 0)
   {
     return ret;
@@ -9170,7 +9180,8 @@ exit:
 
   if (ret == 0)
   {
-    ret = lsm6dsv16x_ln_pg_read(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_PEDO_CMD_REG, (uint8_t *)&pedo_cmd_reg, 1);
+    ret = lsm6dsv16x_ln_pg_read(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_PEDO_CMD_REG,
+                                (uint8_t *)&pedo_cmd_reg, 1);
     pedo_cmd_reg.fp_rejection_en = val.false_step_rej;
     ret += lsm6dsv16x_ln_pg_write(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_PEDO_CMD_REG,
                                   (uint8_t *)&pedo_cmd_reg, 1);
@@ -9202,7 +9213,8 @@ int32_t lsm6dsv16x_stpcnt_mode_get(const stmdev_ctx_t *ctx,
     return ret;
   }
 
-  ret = lsm6dsv16x_ln_pg_read(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_PEDO_CMD_REG, (uint8_t *)&pedo_cmd_reg, 1);
+  ret = lsm6dsv16x_ln_pg_read(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_PEDO_CMD_REG,
+                              (uint8_t *)&pedo_cmd_reg, 1);
   if (ret != 0)
   {
     return ret;
@@ -9315,11 +9327,13 @@ int32_t lsm6dsv16x_stpcnt_debounce_set(const stmdev_ctx_t *ctx, uint8_t val)
   lsm6dsv16x_pedo_deb_steps_conf_t pedo_deb_steps_conf;
   int32_t ret;
 
-  ret = lsm6dsv16x_ln_pg_read(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_PEDO_DEB_STEPS_CONF, (uint8_t *)&pedo_deb_steps_conf, 1);
+  ret = lsm6dsv16x_ln_pg_read(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_PEDO_DEB_STEPS_CONF,
+                              (uint8_t *)&pedo_deb_steps_conf, 1);
   if (ret == 0)
   {
     pedo_deb_steps_conf.deb_step = val;
-    ret = lsm6dsv16x_ln_pg_write(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_PEDO_DEB_STEPS_CONF, (uint8_t *)&pedo_deb_steps_conf, 1);
+    ret = lsm6dsv16x_ln_pg_write(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_PEDO_DEB_STEPS_CONF,
+                                 (uint8_t *)&pedo_deb_steps_conf, 1);
   }
 
   return ret;
@@ -9338,7 +9352,8 @@ int32_t lsm6dsv16x_stpcnt_debounce_get(const stmdev_ctx_t *ctx, uint8_t *val)
   lsm6dsv16x_pedo_deb_steps_conf_t pedo_deb_steps_conf;
   int32_t ret;
 
-  ret = lsm6dsv16x_ln_pg_read(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_PEDO_DEB_STEPS_CONF, (uint8_t *)&pedo_deb_steps_conf, 1);
+  ret = lsm6dsv16x_ln_pg_read(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_PEDO_DEB_STEPS_CONF,
+                              (uint8_t *)&pedo_deb_steps_conf, 1);
   *val = pedo_deb_steps_conf.deb_step;
 
   return ret;
@@ -9359,7 +9374,8 @@ int32_t lsm6dsv16x_stpcnt_period_set(const stmdev_ctx_t *ctx, uint16_t val)
 
   buff[1] = (uint8_t)(val / 256U);
   buff[0] = (uint8_t)(val - (buff[1] * 256U));
-  ret = lsm6dsv16x_ln_pg_write(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_PEDO_SC_DELTAT_L, (uint8_t *)&buff[0], 2);
+  ret = lsm6dsv16x_ln_pg_write(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_PEDO_SC_DELTAT_L,
+                               (uint8_t *)&buff[0], 2);
 
   return ret;
 }
@@ -9377,7 +9393,8 @@ int32_t lsm6dsv16x_stpcnt_period_get(const stmdev_ctx_t *ctx, uint16_t *val)
   uint8_t buff[2];
   int32_t ret;
 
-  ret = lsm6dsv16x_ln_pg_read(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_PEDO_SC_DELTAT_L, &buff[0], 2);
+  ret = lsm6dsv16x_ln_pg_read(ctx, LSM6DSV16X_EMB_ADV_PG_1 + LSM6DSV16X_PEDO_SC_DELTAT_L, &buff[0],
+                              2);
   if (ret != 0)
   {
     return ret;
