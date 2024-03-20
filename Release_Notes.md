@@ -97,7 +97,7 @@ This directory contains the LSM6DSV16X component drivers.
 
 </div>
 
-<input type="checkbox" id="collapse-section6" checked aria-hidden="true">
+<input type="checkbox" id="collapse-section6" aria-hidden="true">
 <label for="collapse-section6" aria-hidden="true">V2.2.1 / 25-July-2023</label>
 <div>
 
@@ -105,6 +105,24 @@ This directory contains the LSM6DSV16X component drivers.
 
 - ah_qvar: Add API to convert from LSB to mV
 - Fix gyro FS 4000dps value typo error
+
+##
+
+</div>
+
+<input type="checkbox" id="collapse-section7" checked aria-hidden="true">
+<label for="collapse-section7" aria-hidden="true">V3.0.0 / 20-Mar-2024</label>
+<div>
+
+## Main changes
+
+- Fixed code style (Artistic Style Version 3.4.13)
+- Fix code style
+- small code cleaning
+- Add "const" to ctx arg for all APIs
+- Support routing of drdy_temp to INT2
+- Fix typo in lsm5dsv16x_fsm_mode_set condition
+- Fix bug in lsm6dsv16x_reg.c
 
 ##
 
