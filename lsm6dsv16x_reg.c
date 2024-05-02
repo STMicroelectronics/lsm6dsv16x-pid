@@ -4006,12 +4006,19 @@ int32_t lsm6dsv16x_fifo_timestamp_batch_get(const stmdev_ctx_t *ctx,
 int32_t lsm6dsv16x_fifo_batch_counter_threshold_set(const stmdev_ctx_t *ctx,
                                                     uint16_t val)
 {
-  uint8_t buff[2];
+  lsm6dsv16x_counter_bdr_reg1_t counter_bdr_reg1;
+  lsm6dsv16x_counter_bdr_reg2_t counter_bdr_reg2;
   int32_t ret;
 
-  buff[1] = (uint8_t)(val / 256U);
-  buff[0] = (uint8_t)(val - (buff[1] * 256U));
-  ret = lsm6dsv16x_write_reg(ctx, LSM6DSV16X_COUNTER_BDR_REG1, (uint8_t *)&buff[0], 2);
+  ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_COUNTER_BDR_REG1, (uint8_t *)&counter_bdr_reg1, 1);
+
+  if (ret == 0)
+  {
+    counter_bdr_reg2.cnt_bdr_th = (uint8_t)val & 0xFFU;
+    counter_bdr_reg1.cnt_bdr_th = (uint8_t)(val >> 8) & 0x3U;
+    ret = lsm6dsv16x_write_reg(ctx, LSM6DSV16X_COUNTER_BDR_REG1, (uint8_t *)&counter_bdr_reg1, 1);
+    ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_COUNTER_BDR_REG2, (uint8_t *)&counter_bdr_reg2, 1);
+  }
 
   return ret;
 }
@@ -4036,8 +4043,8 @@ int32_t lsm6dsv16x_fifo_batch_counter_threshold_get(const stmdev_ctx_t *ctx,
     return ret;
   }
 
-  *val = buff[1];
-  *val = (*val * 256U) + buff[0];
+  *val = (uint16_t)buff[0] & 0x3U;
+  *val = (*val * 256U) + (uint16_t)buff[1];
 
   return ret;
 }
