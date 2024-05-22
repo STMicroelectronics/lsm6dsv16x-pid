@@ -4959,6 +4959,9 @@ int32_t lsm6dsv16x_i3c_reset_mode_set(const stmdev_ctx_t *ctx,
 int32_t lsm6dsv16x_i3c_reset_mode_get(const stmdev_ctx_t *ctx,
                                       lsm6dsv16x_i3c_reset_mode_t *val);
 
+int32_t lsm6dsv16x_i3c_int_en_set(const stmdev_ctx_t *ctx, uint8_t val);
+int32_t lsm6dsv16x_i3c_int_en_get(const stmdev_ctx_t *ctx, uint8_t *val);
+
 typedef enum
 {
   LSM6DSV16X_IBI_2us  = 0x0,

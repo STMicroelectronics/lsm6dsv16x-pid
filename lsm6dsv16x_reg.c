@@ -8055,6 +8055,48 @@ int32_t lsm6dsv16x_i3c_reset_mode_get(const stmdev_ctx_t *ctx,
 }
 
 /**
+  * @brief  Enable/Disable INT pin when I3C is used.[set]
+  *
+  * @param  ctx      read / write interface definitions
+  * @param  val      0: disabled, 1: enabled
+  * @retval          interface status (MANDATORY: return 0 -> no Error)
+  *
+  */
+int32_t lsm6dsv16x_i3c_int_en_set(const stmdev_ctx_t *ctx, uint8_t val)
+{
+  lsm6dsv16x_ctrl5_t ctrl5;
+  int32_t ret;
+
+  ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_CTRL5, (uint8_t *)&ctrl5, 1);
+  if (ret == 0)
+  {
+    ctrl5.int_en_i3c = (uint8_t)val & 0x01U;
+    ret = lsm6dsv16x_write_reg(ctx, LSM6DSV16X_CTRL5, (uint8_t *)&ctrl5, 1);
+  }
+
+  return ret;
+}
+
+/**
+  * @brief  Enable/Disable INT pin when I3C is used.[get]
+  *
+  * @param  ctx      read / write interface definitions
+  * @param  val      0: disabled, 1: enabled
+  * @retval          interface status (MANDATORY: return 0 -> no Error)
+  *
+  */
+int32_t lsm6dsv16x_i3c_int_en_get(const stmdev_ctx_t *ctx, uint8_t *val)
+{
+  lsm6dsv16x_ctrl5_t ctrl5;
+  int32_t ret;
+
+  ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_CTRL5, (uint8_t *)&ctrl5, 1);
+  *val = ctrl5.int_en_i3c;
+
+  return ret;
+}
+
+/**
   * @brief  Select the us activity time for IBI (In-Band Interrupt) with I3C[set]
   *
   * @param  ctx      read / write interface definitions
