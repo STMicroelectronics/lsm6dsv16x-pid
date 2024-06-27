@@ -5925,6 +5925,13 @@ int32_t lsm6dsv16x_fsm_data_rate_get(const stmdev_ctx_t *ctx,
  *
  * Released under BSD-3-Clause License
  */
+
+#define NPY_HALF_GENERATE_OVERFLOW  0 /* do not trigger FP overflow */
+#define NPY_HALF_GENERATE_UNDERFLOW 0 /* do not trigger FP underflow */
+#ifndef NPY_HALF_ROUND_TIES_TO_EVEN
+#define NPY_HALF_ROUND_TIES_TO_EVEN 1
+#endif
+
 static uint16_t npy_floatbits_to_halfbits(uint32_t f)
 {
   uint32_t f_exp, f_sig;
