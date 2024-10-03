@@ -154,13 +154,25 @@ This directory contains the LSM6DSV16X component drivers.
 
 </div>
 
-<input type="checkbox" id="collapse-section10" checked aria-hidden="true">
+<input type="checkbox" id="collapse-section10" aria-hidden="true">
 <label for="collapse-section10" aria-hidden="true">V4.0.0 / 22-Jun-2024</label>
 <div>
 
 ## Main changes
 
 - Add defs for num_phy routines
+
+##
+
+</div>
+
+<input type="checkbox" id="collapse-section11" checked aria-hidden="true">
+<label for="collapse-section11" aria-hidden="true">V4.1.0 / 03-Oct-2024</label>
+<div>
+
+## Main changes
+
+- Add int2_drdy_ah_qvar event routing on INT2 pin
 
 ##
 
