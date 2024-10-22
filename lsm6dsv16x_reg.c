@@ -2135,6 +2135,270 @@ int32_t lsm6dsv16x_pin_int2_route_get(const stmdev_ctx_t *ctx,
 }
 
 /**
+  * @brief  routes embedded func interrupt signals on INT 1 pin.[set]
+  *
+  * @param  ctx      read / write interface definitions
+  * @param  val      routes embedded func interrupt signals on INT 1 pin.
+  * @retval          interface status (MANDATORY: return 0 -> no Error)
+  *
+  */
+int32_t lsm6dsv16x_emb_pin_int1_route_set(const stmdev_ctx_t *ctx,
+                                          const lsm6dsv16x_emb_pin_int_route_t *val)
+{
+  lsm6dsv16x_emb_func_int1_t emb_func_int1;
+  lsm6dsv16x_md1_cfg_t md1_cfg;
+  int32_t ret;
+
+  ret = lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_EMBED_FUNC_MEM_BANK);
+  if (ret == 0)
+  {
+    ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_EMB_FUNC_INT1, (uint8_t *)&emb_func_int1, 1);
+  }
+
+  if (ret == 0)
+  {
+    emb_func_int1.int1_tilt = val->tilt;
+    emb_func_int1.int1_sig_mot = val->sig_mot;
+    emb_func_int1.int1_step_detector = val->step_det;
+    emb_func_int1.int1_fsm_lc = val->fsm_lc;
+
+    ret = lsm6dsv16x_write_reg(ctx, LSM6DSV16X_EMB_FUNC_INT1, (uint8_t *)&emb_func_int1, 1);
+  }
+  ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_MAIN_MEM_BANK);
+
+  ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_MD1_CFG, (uint8_t *)&md1_cfg, 1);
+  if (ret == 0)
+  {
+    md1_cfg.int1_emb_func = 1;
+    ret = lsm6dsv16x_write_reg(ctx, LSM6DSV16X_MD1_CFG, (uint8_t *)&md1_cfg, 1);
+  }
+
+  return ret;
+}
+
+/**
+  * @brief  routes embedded func interrupt signals on INT 1 pin.[get]
+  *
+  * @param  ctx      read / write interface definitions
+  * @param  val      routes embedded func interrupt signals on INT 1 pin.
+  * @retval          interface status (MANDATORY: return 0 -> no Error)
+  *
+  */
+int32_t lsm6dsv16x_emb_pin_int1_route_get(const stmdev_ctx_t *ctx,
+                                          lsm6dsv16x_emb_pin_int_route_t *val)
+{
+  lsm6dsv16x_emb_func_int1_t emb_func_int1;
+  int32_t ret;
+
+  ret = lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_EMBED_FUNC_MEM_BANK);
+  if (ret == 0)
+  {
+    ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_EMB_FUNC_INT1, (uint8_t *)&emb_func_int1, 1);
+  }
+
+  if (ret == 0)
+  {
+    val->tilt = emb_func_int1.int1_tilt;
+    val->sig_mot = emb_func_int1.int1_sig_mot;
+    val->step_det = emb_func_int1.int1_step_detector;
+    val->fsm_lc = emb_func_int1.int1_fsm_lc;
+  }
+  ret = lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_MAIN_MEM_BANK);
+
+  return ret;
+}
+
+/**
+  * @brief  routes embedded func interrupt signals on INT 2 pin.[set]
+  *
+  * @param  ctx      read / write interface definitions
+  * @param  val      routes embedded func interrupt signals on INT 2 pin.
+  * @retval          interface status (MANDATORY: return 0 -> no Error)
+  *
+  */
+int32_t lsm6dsv16x_emb_pin_int2_route_set(const stmdev_ctx_t *ctx,
+                                          const lsm6dsv16x_emb_pin_int_route_t *val)
+{
+  lsm6dsv16x_emb_func_int2_t emb_func_int2;
+  lsm6dsv16x_md2_cfg_t md2_cfg;
+  int32_t ret;
+
+  ret = lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_EMBED_FUNC_MEM_BANK);
+  if (ret == 0)
+  {
+    ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_EMB_FUNC_INT2, (uint8_t *)&emb_func_int2, 1);
+  }
+
+  if (ret == 0)
+  {
+    emb_func_int2.int2_tilt = val->tilt;
+    emb_func_int2.int2_sig_mot = val->sig_mot;
+    emb_func_int2.int2_step_detector = val->step_det;
+    emb_func_int2.int2_fsm_lc = val->fsm_lc;
+
+    ret = lsm6dsv16x_write_reg(ctx, LSM6DSV16X_EMB_FUNC_INT2, (uint8_t *)&emb_func_int2, 1);
+  }
+  ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_MAIN_MEM_BANK);
+
+  ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_MD2_CFG, (uint8_t *)&md2_cfg, 1);
+  if (ret == 0)
+  {
+    md2_cfg.int2_emb_func = 1;
+    ret = lsm6dsv16x_write_reg(ctx, LSM6DSV16X_MD2_CFG, (uint8_t *)&md2_cfg, 1);
+  }
+
+  return ret;
+}
+
+/**
+  * @brief  routes embedded func interrupt signals on INT 2 pin.[get]
+  *
+  * @param  ctx      read / write interface definitions
+  * @param  val      routes embedded func interrupt signals on INT 2 pin.
+  * @retval          interface status (MANDATORY: return 0 -> no Error)
+  *
+  */
+int32_t lsm6dsv16x_emb_pin_int2_route_get(const stmdev_ctx_t *ctx,
+                                          lsm6dsv16x_emb_pin_int_route_t *val)
+{
+  lsm6dsv16x_emb_func_int2_t emb_func_int2;
+  int32_t ret;
+
+  ret = lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_EMBED_FUNC_MEM_BANK);
+  if (ret == 0)
+  {
+    ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_EMB_FUNC_INT2, (uint8_t *)&emb_func_int2, 1);
+  }
+
+  if (ret == 0)
+  {
+    val->tilt = emb_func_int2.int2_tilt;
+    val->sig_mot = emb_func_int2.int2_sig_mot;
+    val->step_det = emb_func_int2.int2_step_detector;
+    val->fsm_lc = emb_func_int2.int2_fsm_lc;
+  }
+  ret = lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_MAIN_MEM_BANK);
+
+  return ret;
+}
+
+/**
+  * @brief  Embedded Interrupt configuration mode.[set]
+  *
+  * @param  ctx      read / write interface definitions
+  * @param  val      INT_PULSED, INT_LATCHED
+  * @retval          interface status (MANDATORY: return 0 -> no Error)
+  *
+  */
+int32_t lsm6dsv16x_embedded_int_cfg_set(const stmdev_ctx_t *ctx,
+                                        lsm6dsv16x_embedded_int_config_t val)
+{
+  lsm6dsv16x_page_rw_t page_rw;
+  int32_t ret;
+
+  ret = lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_EMBED_FUNC_MEM_BANK);
+  if (ret == 0)
+  {
+    ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_PAGE_RW, (uint8_t *)&page_rw, 1);
+
+    switch (val)
+    {
+      case LSM6DSV16X_INT_LATCH_DISABLE:
+        page_rw.emb_func_lir = 0;
+        break;
+
+      case LSM6DSV16X_INT_LATCH_ENABLE:
+      default:
+        page_rw.emb_func_lir = 1;
+        break;
+    }
+
+    ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_PAGE_RW, (uint8_t *)&page_rw, 1);
+  }
+
+  ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_MAIN_MEM_BANK);
+
+  return ret;
+}
+
+/**
+  * @brief  Interrupt configuration mode.[get]
+  *
+  * @param  ctx      read / write interface definitions
+  * @param  val      INT_DISABLED, INT_PULSED, INT_LATCHED
+  * @retval          interface status (MANDATORY: return 0 -> no Error)
+  *
+  */
+int32_t lsm6dsv16x_embedded_int_cfg_get(const stmdev_ctx_t *ctx,
+                                        lsm6dsv16x_embedded_int_config_t *val)
+{
+  lsm6dsv16x_page_rw_t page_rw;
+  int32_t ret;
+
+  ret = lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_EMBED_FUNC_MEM_BANK);
+  if (ret == 0)
+  {
+    ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_PAGE_RW, (uint8_t *)&page_rw, 1);
+
+    if (page_rw.emb_func_lir == 0U)
+    {
+      *val = LSM6DSV16X_INT_LATCH_DISABLE;
+    }
+    else
+    {
+      *val = LSM6DSV16X_INT_LATCH_ENABLE;
+    }
+  }
+
+  ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_MAIN_MEM_BANK);
+
+  return ret;
+}
+
+/**
+  * @brief  Get the status of embedded functions.[get]
+  *
+  * @param  ctx      read / write interface definitions
+  * @param  val      lsm6dsv16x_embedded_status_t ptr
+  * @retval          interface status (MANDATORY: return 0 -> no Error)
+  *
+  */
+int32_t lsm6dsv16x_embedded_status_get(const stmdev_ctx_t *ctx,
+                                       lsm6dsv16x_embedded_status_t *val)
+{
+  lsm6dsv16x_emb_func_status_mainpage_t emb_func_status;
+  lsm6dsv16x_emb_func_src_t emb_func_src;
+  int32_t ret;
+
+  ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_EMB_FUNC_STATUS_MAINPAGE, (uint8_t *)&emb_func_status, 1);
+  if (ret != 0)
+  {
+    return ret;
+  }
+
+  val->step_detector = emb_func_status.is_step_det;
+  val->tilt = emb_func_status.is_tilt;
+  val->sig_mot = emb_func_status.is_sigmot;
+  val->fsm_lc = emb_func_status.is_fsm_lc;
+
+  /* embedded func */
+  ret = lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_EMBED_FUNC_MEM_BANK);
+  ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_EMB_FUNC_SRC, (uint8_t *)&emb_func_src, 1);
+  ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_MAIN_MEM_BANK);
+  if (ret != 0)
+  {
+    return ret;
+  }
+
+  val->step_count_inc = emb_func_src.stepcounter_bit_set;
+  val->step_count_overflow = emb_func_src.step_overflow;
+  val->step_on_delta_time = emb_func_src.step_count_delta_ia;
+  val->step_detector = emb_func_src.step_detected;
+
+  return ret;
+}
+
+/**
   * @}
   *
   */

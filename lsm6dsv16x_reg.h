@@ -4206,6 +4206,45 @@ int32_t lsm6dsv16x_pin_int2_route_get(const stmdev_ctx_t *ctx,
 
 typedef struct
 {
+  uint8_t step_det                     : 1; /* route step detection event on INT pad */
+  uint8_t tilt                         : 1; /* route tilt event on INT pad */
+  uint8_t sig_mot                      : 1; /* route significant motion event on INT pad */
+  uint8_t fsm_lc                       : 1; /* route FSM long counter event on INT pad */
+} lsm6dsv16x_emb_pin_int_route_t;
+int32_t lsm6dsv16x_emb_pin_int1_route_set(const stmdev_ctx_t *ctx,
+                                          const lsm6dsv16x_emb_pin_int_route_t *val);
+int32_t lsm6dsv16x_emb_pin_int1_route_get(const stmdev_ctx_t *ctx,
+                                          lsm6dsv16x_emb_pin_int_route_t *val);
+int32_t lsm6dsv16x_emb_pin_int2_route_set(const stmdev_ctx_t *ctx,
+                                          const lsm6dsv16x_emb_pin_int_route_t *val);
+int32_t lsm6dsv16x_emb_pin_int2_route_get(const stmdev_ctx_t *ctx,
+                                          lsm6dsv16x_emb_pin_int_route_t *val);
+
+typedef enum
+{
+  LSM6DSV16X_INT_LATCH_DISABLE         = 0x0,
+  LSM6DSV16X_INT_LATCH_ENABLE          = 0x1,
+} lsm6dsv16x_embedded_int_config_t;
+int32_t lsm6dsv16x_embedded_int_cfg_set(const stmdev_ctx_t *ctx,
+                                        lsm6dsv16x_embedded_int_config_t val);
+int32_t lsm6dsv16x_embedded_int_cfg_get(const stmdev_ctx_t *ctx,
+                                        lsm6dsv16x_embedded_int_config_t *val);
+
+typedef struct
+{
+  uint8_t tilt                 : 1;
+  uint8_t sig_mot              : 1;
+  uint8_t fsm_lc               : 1;
+  uint8_t step_detector        : 1;
+  uint8_t step_count_inc       : 1;
+  uint8_t step_count_overflow  : 1;
+  uint8_t step_on_delta_time   : 1;
+} lsm6dsv16x_embedded_status_t;
+int32_t lsm6dsv16x_embedded_status_get(const stmdev_ctx_t *ctx,
+                                       lsm6dsv16x_embedded_status_t *val);
+
+typedef struct
+{
   uint8_t drdy_xl              : 1;
   uint8_t drdy_gy              : 1;
   uint8_t drdy_temp            : 1;
