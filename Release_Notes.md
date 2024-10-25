@@ -166,7 +166,7 @@ This directory contains the LSM6DSV16X component drivers.
 
 </div>
 
-<input type="checkbox" id="collapse-section11" checked aria-hidden="true">
+<input type="checkbox" id="collapse-section11" aria-hidden="true">
 <label for="collapse-section11" aria-hidden="true">V4.1.0 / 03-Oct-2024</label>
 <div>
 
@@ -177,7 +177,22 @@ This directory contains the LSM6DSV16X component drivers.
 ##
 
 </div>
+
+<input type="checkbox" id="collapse-section12" checked aria-hidden="true">
+<label for="collapse-section12" aria-hidden="true">V4.2.0 / 25-Oct-2024</label>
+<div>
+
+## Main changes
+
+- added struct types to help parsing FIFO data
+- Complete APIs for handling embedded functions
+- simplify efficiently the fifo_read API
+
+##
+
+</div>
 :::
+
 
 :::
 :::
