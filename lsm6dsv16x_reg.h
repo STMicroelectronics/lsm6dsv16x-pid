@@ -4479,6 +4479,31 @@ typedef struct
 int32_t lsm6dsv16x_fifo_status_get(const stmdev_ctx_t *ctx,
                                    lsm6dsv16x_fifo_status_t *val);
 
+/* Accel data format in FIFO */
+typedef struct
+{
+  int16_t axis[3];
+} lsm6dsv16x_fifo_xl;
+
+/* Temperature data format in FIFO */
+typedef struct
+{
+  uint16_t temperature;
+} lsm6dsv16x_fifo_temperature;
+
+/* Timestamp  format in FIFO */
+typedef struct
+{
+  uint32_t timestamp;
+} lsm6dsv16x_fifo_timestamp;
+
+/* Step counter data format in FIFO */
+typedef struct
+{
+  uint16_t steps;
+  uint32_t timestamp;
+} lsm6dsv16x_fifo_step_counter;
+
 typedef struct
 {
   enum
@@ -4512,7 +4537,7 @@ typedef struct
     LSM6DSV16X_XL_DUAL_CORE                  = 0x1D,
     LSM6DSV16X_GY_ENHANCED_EIS               = 0x1E,
   } tag;
-  uint8_t cnt;
+  uint8_t cnt : 2;
   uint8_t data[6];
 } lsm6dsv16x_fifo_out_raw_t;
 int32_t lsm6dsv16x_fifo_out_raw_get(const stmdev_ctx_t *ctx,
