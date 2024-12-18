@@ -189,6 +189,60 @@ float_t lsm6dsv16x_from_lsb_to_mv(int16_t lsb)
   return ((float_t)lsb) / 78.0f;
 }
 
+/*
+ * Original conversion routines taken from: https://github.com/numpy/numpy
+ *
+ * Converts from half-precision (16-bit) float number to single precision (32-bit).
+ *
+ * uint32_t  static uint32_t ToFloatBits(uint16_t h);
+ * Released under BSD-3-Clause License
+ */
+static uint32_t ToFloatBits(uint16_t h)
+{
+  uint16_t h_exp = (h & 0x7c00u);
+  uint32_t f_sgn = ((uint32_t)h & 0x8000u) << 16;
+  switch (h_exp)
+  {
+    case 0x0000u:   // 0 or subnormal
+    {
+      uint16_t h_sig = (h & 0x03ffu);
+      // Signed zero
+      if (h_sig == 0)
+      {
+        return f_sgn;
+      }
+      // Subnormal
+      h_sig <<= 1;
+      while ((h_sig & 0x0400u) == 0)
+      {
+        h_sig <<= 1;
+        h_exp++;
+      }
+      uint32_t f_exp = ((uint32_t)(127 - 15 - h_exp)) << 23;
+      uint32_t f_sig = ((uint32_t)(h_sig & 0x03ffu)) << 13;
+      return f_sgn + f_exp + f_sig;
+    }
+    case 0x7c00u: // inf or NaN
+      // All-ones exponent and a copy of the significand
+      return f_sgn + 0x7f800000u + (((uint32_t)(h & 0x03ffu)) << 13);
+    default: // normalized
+      // Just need to adjust the exponent and shift
+      return f_sgn + (((uint32_t)(h & 0x7fffu) + 0x1c000u) << 13);
+  }
+}
+
+/**
+  * @brief  Convert from 16-bit to 32-bit float number
+  *
+  * @param  val      Batching in FIFO buffer of SFLP values.
+  * @retval          interface status (MANDATORY: return 0 -> no Error)
+  *
+  */
+uint32_t lsm6dsv16x_from_f16_to_f32(uint16_t val)
+{
+  return ToFloatBits(val);
+}
+
 /**
   * @}
   *
