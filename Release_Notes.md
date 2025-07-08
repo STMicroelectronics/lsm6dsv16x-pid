@@ -32,7 +32,7 @@ This directory contains the LSM6DSV16X component drivers.
 ::: {.collapse}
 <input type="checkbox" id="collapse-section1" aria-hidden="true">
 <label for="collapse-section1" aria-hidden="true">V1.0.0 / 03-Aug-2022</label>
-<div>			
+<div>
 
 ## Main changes
 
@@ -192,7 +192,7 @@ This directory contains the LSM6DSV16X component drivers.
 
 </div>
 
-<input type="checkbox" id="collapse-section13" checked aria-hidden="true">
+<input type="checkbox" id="collapse-section13" aria-hidden="true">
 <label for="collapse-section13" aria-hidden="true">V4.3.0 / 18-Dec-2024</label>
 <div>
 
@@ -200,6 +200,19 @@ This directory contains the LSM6DSV16X component drivers.
 
 - Move fifo_tag out of struct fifo_out_raw
 - Add API to transform float16 to float32
+
+##
+
+</div>
+
+<input type="checkbox" id="collapse-section14" checked aria-hidden="true">
+<label for="collapse-section14" aria-hidden="true">V4.4.0 / 07-Jul-2025</label>
+<div>
+
+## Main changes
+
+- Fix driver formatting options
+- Added pointer to private data in stmdev_ctx_t
 
 ##
 
