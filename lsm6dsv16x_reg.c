@@ -439,9 +439,9 @@ int32_t lsm6dsv16x_reset_set(const stmdev_ctx_t *ctx, lsm6dsv16x_reset_t val)
     return ret;
   }
 
-  ctrl3.boot = ((uint8_t)val & 0x04U) >> 2;
-  ctrl3.sw_reset = ((uint8_t)val & 0x02U) >> 1;
-  func_cfg_access.sw_por = (uint8_t)val & 0x01U;
+  ctrl3.boot = (val == LSM6DSV16X_RESTORE_CAL_PARAM) ? 1 : 0;
+  ctrl3.sw_reset = (val == LSM6DSV16X_RESTORE_CTRL_REGS) ? 1 : 0;
+  func_cfg_access.sw_por = (val == LSM6DSV16X_GLOBAL_RST) ? 1 : 0;
 
   ret = lsm6dsv16x_write_reg(ctx, LSM6DSV16X_CTRL3, (uint8_t *)&ctrl3, 1);
   ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_FUNC_CFG_ACCESS, (uint8_t *)&func_cfg_access, 1);
