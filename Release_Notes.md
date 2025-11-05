@@ -218,8 +218,8 @@ This directory contains the LSM6DSV16X component drivers.
 
 </div>
 
-<input type="checkbox" id="collapse-section15" checked aria-hidden="true">
-<label for="collapse-section15" aria-hidden="true">V5.0.0 / 06-Oc-2025</label>
+<input type="checkbox" id="collapse-section15" aria-hidden="true">
+<label for="collapse-section15" aria-hidden="true">V5.0.0 / 06-Oct-2025</label>
 <div>
 
 ## Main changes
@@ -229,6 +229,20 @@ This directory contains the LSM6DSV16X component drivers.
 - Add enum `fifo_event_t` for stop_on_wtm_set/get functions
 - int1/int2 route_get API: init to 0 the returned struct
 - Adding CODE_OF_CONDUCT.md and SECURITY.md
+
+##
+
+</div>
+
+<input type="checkbox" id="collapse-section16" checked aria-hidden="true">
+<label for="collapse-section16" aria-hidden="true">V6.0.0 / 05-Nov-2025</label>
+<div>
+
+## Main changes
+
+- Added checks before writes and membank setting
+- split reset into 3 routines (reboot, sw_por, reset)
+- (FIX) move memset in pin_int2_route_get() API
 
 ##
 
