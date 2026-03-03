@@ -48,99 +48,94 @@ license</a></p>
 <section id="update-history" class="col-sm-12 col-lg-8">
 <h1>Update history</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section1" aria-hidden="true">
-<label for="collapse-section1" aria-hidden="true">V1.0.0 /
-03-Aug-2022</label>
+<input type="checkbox" id="collapse-section17" checked aria-hidden="true">
+<label for="collapse-section17" aria-hidden="true">V6.0.1 /
+19-Nov-2025</label>
 <div>
 <h2 id="main-changes">Main changes</h2>
-<h3 id="first-release">First release</h3>
 <ul>
-<li>First official release [ref. DS v1.0]</li>
+<li>(fix) do not jump to exit before initing master_config</li>
 </ul>
 <h2 id="section"></h2>
 </div>
-<input type="checkbox" id="collapse-section2" aria-hidden="true">
-<label for="collapse-section2" aria-hidden="true">V2.0.0 /
-22-Nov-2022</label>
+<input type="checkbox" id="collapse-section16" aria-hidden="true">
+<label for="collapse-section16" aria-hidden="true">V6.0.0 /
+05-Nov-2025</label>
 <div>
 <h2 id="main-changes-1">Main changes</h2>
 <ul>
-<li>First official release [ref. DS v2.0]</li>
+<li>Added checks before writes and membank setting</li>
+<li>split reset into 3 routines (reboot, sw_por, reset)</li>
+<li>(FIX) move memset in pin_int2_route_get() API</li>
 </ul>
 <h2 id="section-1"></h2>
 </div>
-<input type="checkbox" id="collapse-section3" aria-hidden="true">
-<label for="collapse-section3" aria-hidden="true">V2.1.0 /
-15-May-2023</label>
+<input type="checkbox" id="collapse-section15" aria-hidden="true">
+<label for="collapse-section15" aria-hidden="true">V5.0.0 /
+06-Oct-2025</label>
 <div>
 <h2 id="main-changes-2">Main changes</h2>
 <ul>
-<li>change fifo_batch_sh_slave_xxx() API name</li>
-<li>sensor_hub: add sh_status_get() API</li>
-<li>sensor_hub: change sh_read_data_raw_get() API signature</li>
-<li>review read/write reg ret value checks</li>
+<li>Added comments on reset_t enum</li>
+<li>Fix reset_set API: fields boot and sw_reset were wrongly set</li>
+<li>Add enum <code>fifo_event_t</code> for stop_on_wtm_set/get
+functions</li>
+<li>int1/int2 route_get API: init to 0 the returned struct</li>
+<li>Adding CODE_OF_CONDUCT.md and SECURITY.md</li>
 </ul>
 <h2 id="section-2"></h2>
 </div>
-<input type="checkbox" id="collapse-section4" aria-hidden="true">
-<label for="collapse-section4" aria-hidden="true">V2.1.1 /
-18-May-2023</label>
+<input type="checkbox" id="collapse-section14" aria-hidden="true">
+<label for="collapse-section14" aria-hidden="true">V4.4.0 /
+07-Jul-2025</label>
 <div>
 <h2 id="main-changes-3">Main changes</h2>
 <ul>
-<li>read sh status from mainpage</li>
+<li>Fix driver formatting options</li>
+<li>Added pointer to private data in stmdev_ctx_t</li>
 </ul>
 <h2 id="section-3"></h2>
 </div>
-<input type="checkbox" id="collapse-section5" aria-hidden="true">
-<label for="collapse-section5" aria-hidden="true">V2.2.0 /
-23-May-2023</label>
+<input type="checkbox" id="collapse-section13" aria-hidden="true">
+<label for="collapse-section13" aria-hidden="true">V4.3.0 /
+18-Dec-2024</label>
 <div>
 <h2 id="main-changes-4">Main changes</h2>
 <ul>
-<li>Use a single lsm6dsv16x_sh_slv_cfg_read() API for all targets</li>
-<li>Use a single lsm6dsv16x_fifo_sh_batch_slave_xxx() API for all
-targets</li>
-<li>Fix MISRA errors</li>
+<li>Move fifo_tag out of struct fifo_out_raw</li>
+<li>Add API to transform float16 to float32</li>
 </ul>
 <h2 id="section-4"></h2>
 </div>
-<input type="checkbox" id="collapse-section6" aria-hidden="true">
-<label for="collapse-section6" aria-hidden="true">V2.2.1 /
-25-July-2023</label>
+<input type="checkbox" id="collapse-section12" aria-hidden="true">
+<label for="collapse-section12" aria-hidden="true">V4.2.0 /
+25-Oct-2024</label>
 <div>
 <h2 id="main-changes-5">Main changes</h2>
 <ul>
-<li>ah_qvar: Add API to convert from LSB to mV</li>
-<li>Fix gyro FS 4000dps value typo error</li>
+<li>added struct types to help parsing FIFO data</li>
+<li>Complete APIs for handling embedded functions</li>
+<li>simplify efficiently the fifo_read API</li>
 </ul>
 <h2 id="section-5"></h2>
 </div>
-<input type="checkbox" id="collapse-section7" aria-hidden="true">
-<label for="collapse-section7" aria-hidden="true">V3.0.0 /
-20-Mar-2024</label>
+<input type="checkbox" id="collapse-section11" aria-hidden="true">
+<label for="collapse-section11" aria-hidden="true">V4.1.0 /
+03-Oct-2024</label>
 <div>
 <h2 id="main-changes-6">Main changes</h2>
 <ul>
-<li>Fixed code style (Artistic Style Version 3.4.13)</li>
-<li>Fix code style</li>
-<li>small code cleaning</li>
-<li>Add “const” to ctx arg for all APIs</li>
-<li>Support routing of drdy_temp to INT2</li>
-<li>Fix typo in lsm5dsv16x_fsm_mode_set condition</li>
-<li>Fix bug in lsm6dsv16x_reg.c</li>
+<li>Add int2_drdy_ah_qvar event routing on INT2 pin</li>
 </ul>
 <h2 id="section-6"></h2>
 </div>
-<input type="checkbox" id="collapse-section8" aria-hidden="true">
-<label for="collapse-section8" aria-hidden="true">V3.0.1 /
-02-May-2024</label>
+<input type="checkbox" id="collapse-section10" aria-hidden="true">
+<label for="collapse-section10" aria-hidden="true">V4.0.0 /
+22-Jun-2024</label>
 <div>
 <h2 id="main-changes-7">Main changes</h2>
 <ul>
-<li>Fix BDR counter regsters get/set APIs</li>
-<li>updated README.md file with tag reference and mdelay
-description</li>
+<li>Add defs for num_phy routines</li>
 </ul>
 <h2 id="section-7"></h2>
 </div>
@@ -155,94 +150,99 @@ description</li>
 </ul>
 <h2 id="section-8"></h2>
 </div>
-<input type="checkbox" id="collapse-section10" aria-hidden="true">
-<label for="collapse-section10" aria-hidden="true">V4.0.0 /
-22-Jun-2024</label>
+<input type="checkbox" id="collapse-section8" aria-hidden="true">
+<label for="collapse-section8" aria-hidden="true">V3.0.1 /
+02-May-2024</label>
 <div>
 <h2 id="main-changes-9">Main changes</h2>
 <ul>
-<li>Add defs for num_phy routines</li>
+<li>Fix BDR counter regsters get/set APIs</li>
+<li>updated README.md file with tag reference and mdelay
+description</li>
 </ul>
 <h2 id="section-9"></h2>
 </div>
-<input type="checkbox" id="collapse-section11" aria-hidden="true">
-<label for="collapse-section11" aria-hidden="true">V4.1.0 /
-03-Oct-2024</label>
+<input type="checkbox" id="collapse-section7" aria-hidden="true">
+<label for="collapse-section7" aria-hidden="true">V3.0.0 /
+20-Mar-2024</label>
 <div>
 <h2 id="main-changes-10">Main changes</h2>
 <ul>
-<li>Add int2_drdy_ah_qvar event routing on INT2 pin</li>
+<li>Fixed code style (Artistic Style Version 3.4.13)</li>
+<li>Fix code style</li>
+<li>small code cleaning</li>
+<li>Add “const” to ctx arg for all APIs</li>
+<li>Support routing of drdy_temp to INT2</li>
+<li>Fix typo in lsm5dsv16x_fsm_mode_set condition</li>
+<li>Fix bug in lsm6dsv16x_reg.c</li>
 </ul>
 <h2 id="section-10"></h2>
 </div>
-<input type="checkbox" id="collapse-section12" aria-hidden="true">
-<label for="collapse-section12" aria-hidden="true">V4.2.0 /
-25-Oct-2024</label>
+<input type="checkbox" id="collapse-section6" aria-hidden="true">
+<label for="collapse-section6" aria-hidden="true">V2.2.1 /
+25-July-2023</label>
 <div>
 <h2 id="main-changes-11">Main changes</h2>
 <ul>
-<li>added struct types to help parsing FIFO data</li>
-<li>Complete APIs for handling embedded functions</li>
-<li>simplify efficiently the fifo_read API</li>
+<li>ah_qvar: Add API to convert from LSB to mV</li>
+<li>Fix gyro FS 4000dps value typo error</li>
 </ul>
 <h2 id="section-11"></h2>
 </div>
-<input type="checkbox" id="collapse-section13" aria-hidden="true">
-<label for="collapse-section13" aria-hidden="true">V4.3.0 /
-18-Dec-2024</label>
+<input type="checkbox" id="collapse-section5" aria-hidden="true">
+<label for="collapse-section5" aria-hidden="true">V2.2.0 /
+23-May-2023</label>
 <div>
 <h2 id="main-changes-12">Main changes</h2>
 <ul>
-<li>Move fifo_tag out of struct fifo_out_raw</li>
-<li>Add API to transform float16 to float32</li>
+<li>Use a single lsm6dsv16x_sh_slv_cfg_read() API for all targets</li>
+<li>Use a single lsm6dsv16x_fifo_sh_batch_slave_xxx() API for all
+targets</li>
+<li>Fix MISRA errors</li>
 </ul>
 <h2 id="section-12"></h2>
 </div>
-<input type="checkbox" id="collapse-section14" aria-hidden="true">
-<label for="collapse-section14" aria-hidden="true">V4.4.0 /
-07-Jul-2025</label>
+<input type="checkbox" id="collapse-section4" aria-hidden="true">
+<label for="collapse-section4" aria-hidden="true">V2.1.1 /
+18-May-2023</label>
 <div>
 <h2 id="main-changes-13">Main changes</h2>
 <ul>
-<li>Fix driver formatting options</li>
-<li>Added pointer to private data in stmdev_ctx_t</li>
+<li>read sh status from mainpage</li>
 </ul>
 <h2 id="section-13"></h2>
 </div>
-<input type="checkbox" id="collapse-section15" aria-hidden="true">
-<label for="collapse-section15" aria-hidden="true">V5.0.0 /
-06-Oct-2025</label>
+<input type="checkbox" id="collapse-section3" aria-hidden="true">
+<label for="collapse-section3" aria-hidden="true">V2.1.0 /
+15-May-2023</label>
 <div>
 <h2 id="main-changes-14">Main changes</h2>
 <ul>
-<li>Added comments on reset_t enum</li>
-<li>Fix reset_set API: fields boot and sw_reset were wrongly set</li>
-<li>Add enum <code>fifo_event_t</code> for stop_on_wtm_set/get
-functions</li>
-<li>int1/int2 route_get API: init to 0 the returned struct</li>
-<li>Adding CODE_OF_CONDUCT.md and SECURITY.md</li>
+<li>change fifo_batch_sh_slave_xxx() API name</li>
+<li>sensor_hub: add sh_status_get() API</li>
+<li>sensor_hub: change sh_read_data_raw_get() API signature</li>
+<li>review read/write reg ret value checks</li>
 </ul>
 <h2 id="section-14"></h2>
 </div>
-<input type="checkbox" id="collapse-section16" aria-hidden="true">
-<label for="collapse-section16" aria-hidden="true">V6.0.0 /
-05-Nov-2025</label>
+<input type="checkbox" id="collapse-section2" aria-hidden="true">
+<label for="collapse-section2" aria-hidden="true">V2.0.0 /
+22-Nov-2022</label>
 <div>
 <h2 id="main-changes-15">Main changes</h2>
 <ul>
-<li>Added checks before writes and membank setting</li>
-<li>split reset into 3 routines (reboot, sw_por, reset)</li>
-<li>(FIX) move memset in pin_int2_route_get() API</li>
+<li>First official release [ref. DS v2.0]</li>
 </ul>
 <h2 id="section-15"></h2>
 </div>
-<input type="checkbox" id="collapse-section17" checked aria-hidden="true">
-<label for="collapse-section17" aria-hidden="true">V6.0.1 /
-19-Nov-2025</label>
+<input type="checkbox" id="collapse-section1" aria-hidden="true">
+<label for="collapse-section1" aria-hidden="true">V1.0.0 /
+03-Aug-2022</label>
 <div>
 <h2 id="main-changes-16">Main changes</h2>
+<h3 id="first-release">First release</h3>
 <ul>
-<li>(fix) do not jump to exit before initing master_config</li>
+<li>First official release [ref. DS v1.0]</li>
 </ul>
 <h2 id="section-16"></h2>
 </div>
