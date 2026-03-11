@@ -6540,408 +6540,6 @@ int32_t lsm6dsv16x_fsm_data_rate_get(const stmdev_ctx_t *ctx,
   return ret;
 }
 
-/*
- * Original conversion routines taken from: https://github.com/numpy/numpy
- *
- * uint16_t npy_floatbits_to_halfbits(uint32_t f);
- * uint16_t npy_float_to_half(float_t f);
- *
- * Released under BSD-3-Clause License
- */
-
-#define NPY_HALF_GENERATE_OVERFLOW  0 /* do not trigger FP overflow */
-#define NPY_HALF_GENERATE_UNDERFLOW 0 /* do not trigger FP underflow */
-#ifndef NPY_HALF_ROUND_TIES_TO_EVEN
-#define NPY_HALF_ROUND_TIES_TO_EVEN 1
-#endif
-
-static uint16_t npy_floatbits_to_halfbits(uint32_t f)
-{
-  uint32_t f_exp, f_sig;
-  uint16_t h_sgn, h_exp, h_sig;
-
-  h_sgn = (uint16_t)((f & 0x80000000u) >> 16);
-  f_exp = (f & 0x7f800000u);
-
-  /* Exponent overflow/NaN converts to signed inf/NaN */
-  if (f_exp >= 0x47800000u)
-  {
-    if (f_exp == 0x7f800000u)
-    {
-      /* Inf or NaN */
-      f_sig = (f & 0x007fffffu);
-      if (f_sig != 0U)
-      {
-        /* NaN - propagate the flag in the significand... */
-        uint16_t ret = (uint16_t)(0x7c00u + (f_sig >> 13));
-        /* ...but make sure it stays a NaN */
-        if (ret == 0x7c00u)
-        {
-          ret++;
-        }
-        return h_sgn + ret;
-      }
-      else
-      {
-        /* signed inf */
-        return (uint16_t)(h_sgn + 0x7c00u);
-      }
-    }
-    else
-    {
-      /* overflow to signed inf */
-#if NPY_HALF_GENERATE_OVERFLOW
-      npy_set_floatstatus_overflow();
-#endif
-      return (uint16_t)(h_sgn + 0x7c00u);
-    }
-  }
-
-  /* Exponent underflow converts to a subnormal half or signed zero */
-  if (f_exp <= 0x38000000u)
-  {
-    /*
-     * Signed zeros, subnormal floats, and floats with small
-     * exponents all convert to signed zero half-floats.
-     */
-    if (f_exp < 0x33000000u)
-    {
-#if NPY_HALF_GENERATE_UNDERFLOW
-      /* If f != 0, it underflowed to 0 */
-      if ((f & 0x7fffffff) != 0)
-      {
-        npy_set_floatstatus_underflow();
-      }
-#endif
-      return h_sgn;
-    }
-    /* Make the subnormal significand */
-    f_exp >>= 23;
-    f_sig = (0x00800000u + (f & 0x007fffffu));
-#if NPY_HALF_GENERATE_UNDERFLOW
-    /* If it's not exactly represented, it underflowed */
-    if ((f_sig & (((uint32_t)1 << (126 - f_exp)) - 1)) != 0)
-    {
-      npy_set_floatstatus_underflow();
-    }
-#endif
-    /*
-     * Usually the significand is shifted by 13. For subnormals an
-     * additional shift needs to occur. This shift is one for the largest
-     * exponent giving a subnormal `f_exp = 0x38000000 >> 23 = 112`, which
-     * offsets the new first bit. At most the shift can be 1+10 bits.
-     */
-    f_sig >>= (113U - f_exp);
-    /* Handle rounding by adding 1 to the bit beyond half precision */
-#if NPY_HALF_ROUND_TIES_TO_EVEN
-    /*
-     * If the last bit in the half significand is 0 (already even), and
-     * the remaining bit pattern is 1000...0, then we do not add one
-     * to the bit after the half significand. However, the (113 - f_exp)
-     * shift can lose up to 11 bits, so the || checks them in the original.
-     * In all other cases, we can just add one.
-     */
-    if (((f_sig & 0x00003fffu) != 0x00001000u) || (f & 0x000007ffu))
-    {
-      f_sig += 0x00001000u;
-    }
-#else
-    f_sig += 0x00001000u;
-#endif
-    h_sig = (uint16_t)(f_sig >> 13);
-    /*
-     * If the rounding causes a bit to spill into h_exp, it will
-     * increment h_exp from zero to one and h_sig will be zero.
-     * This is the correct result.
-     */
-    return (uint16_t)(h_sgn + h_sig);
-  }
-
-  /* Regular case with no overflow or underflow */
-  h_exp = (uint16_t)((f_exp - 0x38000000u) >> 13);
-  /* Handle rounding by adding 1 to the bit beyond half precision */
-  f_sig = (f & 0x007fffffu);
-#if NPY_HALF_ROUND_TIES_TO_EVEN
-  /*
-   * If the last bit in the half significand is 0 (already even), and
-   * the remaining bit pattern is 1000...0, then we do not add one
-   * to the bit after the half significand.  In all other cases, we do.
-   */
-  if ((f_sig & 0x00003fffu) != 0x00001000u)
-  {
-    f_sig += 0x00001000u;
-  }
-#else
-  f_sig += 0x00001000u;
-#endif
-  h_sig = (uint16_t)(f_sig >> 13);
-  /*
-   * If the rounding causes a bit to spill into h_exp, it will
-   * increment h_exp by one and h_sig will be zero.  This is the
-   * correct result.  h_exp may increment to 15, at greatest, in
-   * which case the result overflows to a signed inf.
-   */
-#if NPY_HALF_GENERATE_OVERFLOW
-  h_sig += h_exp;
-  if (h_sig == 0x7c00u)
-  {
-    npy_set_floatstatus_overflow();
-  }
-  return h_sgn + h_sig;
-#else
-  return h_sgn + h_exp + h_sig;
-#endif
-}
-
-static uint16_t npy_float_to_half(float_t f)
-{
-  union
-  {
-    float_t f;
-    uint32_t fbits;
-  } conv;
-  conv.f = f;
-  return npy_floatbits_to_halfbits(conv.fbits);
-}
-
-/**
-  * @brief  SFLP GBIAS value. The register value is expressed as half-precision
-  *         floating-point format: SEEEEEFFFFFFFFFF (S: 1 sign bit; E: 5 exponent
-  *          bits; F: 10 fraction bits).[set]
-  *
-  * @param  ctx      read / write interface definitions
-  * @param  val      GBIAS x/y/z val.
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
-  *
-  */
-int32_t lsm6dsv16x_sflp_game_gbias_set(const stmdev_ctx_t *ctx,
-                                       lsm6dsv16x_sflp_gbias_t *val)
-{
-  lsm6dsv16x_sflp_data_rate_t sflp_odr;
-  lsm6dsv16x_emb_func_exec_status_t emb_func_sts;
-  lsm6dsv16x_data_ready_t drdy;
-  lsm6dsv16x_xl_full_scale_t xl_fs;
-  lsm6dsv16x_ctrl10_t ctrl10;
-  uint8_t master_config;
-  uint8_t emb_func_en_saved[2];
-  uint8_t conf_saved[2];
-  uint8_t reg_zero[2] = {0x0, 0x0};
-  uint16_t gbias_hf[3];
-  float_t k = 0.005f;
-  int16_t xl_data[3];
-  int32_t data_tmp;
-  uint8_t *data_ptr = (uint8_t *)&data_tmp;
-  uint8_t i, j;
-  int32_t ret;
-
-  ret = lsm6dsv16x_sflp_data_rate_get(ctx, &sflp_odr);
-  if (ret != 0)
-  {
-    return ret;
-  }
-
-  /* Calculate k factor */
-  switch (sflp_odr)
-  {
-    default:
-    case LSM6DSV16X_SFLP_15Hz:
-      k = 0.04f;
-      break;
-    case LSM6DSV16X_SFLP_30Hz:
-      k = 0.02f;
-      break;
-    case LSM6DSV16X_SFLP_60Hz:
-      k = 0.01f;
-      break;
-    case LSM6DSV16X_SFLP_120Hz:
-      k = 0.005f;
-      break;
-    case LSM6DSV16X_SFLP_240Hz:
-      k = 0.0025f;
-      break;
-    case LSM6DSV16X_SFLP_480Hz:
-      k = 0.00125f;
-      break;
-  }
-
-  /* compute gbias as half precision float in order to be put in embedded advanced feature register */
-  gbias_hf[0] = npy_float_to_half(val->gbias_x * (3.14159265358979323846f / 180.0f) / k);
-  gbias_hf[1] = npy_float_to_half(val->gbias_y * (3.14159265358979323846f / 180.0f) / k);
-  gbias_hf[2] = npy_float_to_half(val->gbias_z * (3.14159265358979323846f / 180.0f) / k);
-
-  /* Save sensor configuration and set high-performance mode (if the sensor is in power-down mode, turn it on) */
-  ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_CTRL1, conf_saved, 2);
-  if (ret != 0)
-  {
-    return ret;
-  }
-
-  ret += lsm6dsv16x_xl_mode_set(ctx, LSM6DSV16X_XL_HIGH_PERFORMANCE_MD);
-  ret += lsm6dsv16x_gy_mode_set(ctx, LSM6DSV16X_GY_HIGH_PERFORMANCE_MD);
-  if (((uint8_t)conf_saved[0] & 0x0FU) == (uint8_t)LSM6DSV16X_ODR_OFF)
-  {
-    ret += lsm6dsv16x_xl_data_rate_set(ctx, LSM6DSV16X_ODR_AT_120Hz);
-  }
-
-  /* Make sure to turn the sensor-hub master off */
-  ret += lsm6dsv16x_sh_master_get(ctx, &master_config);
-  if (ret != 0)
-  {
-    goto exit;
-  }
-  ret += lsm6dsv16x_sh_master_set(ctx, 0);
-  if (ret != 0)
-  {
-    goto exit;
-  }
-
-  /* disable algos */
-  ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_EMBED_FUNC_MEM_BANK);
-  if (ret != 0)
-  {
-    goto exit;
-  }
-  ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_EMB_FUNC_EN_A, emb_func_en_saved, 2);
-  if (ret == 0)
-  {
-    ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_EMB_FUNC_EN_A, reg_zero, 2);
-  }
-  if (ret == 0)
-  {
-    do
-    {
-      ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_EMB_FUNC_EXEC_STATUS,
-                                 (uint8_t *)&emb_func_sts, 1);
-    } while (emb_func_sts.emb_func_endop != 1U);
-  }
-  ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_MAIN_MEM_BANK);
-  if (ret != 0)
-  {
-    goto exit;
-  }
-
-  // enable gbias setting
-  ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_CTRL10, (uint8_t *)&ctrl10, 1);
-  if (ret == 0)
-  {
-    ctrl10.emb_func_debug = 1;
-    ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_CTRL10, (uint8_t *)&ctrl10, 1);
-  }
-  if (ret != 0)
-  {
-    goto exit;
-  }
-
-  /* enable algos */
-  ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_EMBED_FUNC_MEM_BANK);
-  if (ret == 0)
-  {
-    emb_func_en_saved[0] |= 0x02U; /* force SFLP GAME en */
-    ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_EMB_FUNC_EN_A, emb_func_en_saved,
-                                2);
-  }
-  ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_MAIN_MEM_BANK);
-  if (ret != 0)
-  {
-    goto exit;
-  }
-
-  ret += lsm6dsv16x_xl_full_scale_get(ctx, &xl_fs);
-  if (ret != 0)
-  {
-    goto exit;
-  }
-
-  /* Read XL data */
-  do
-  {
-    ret += lsm6dsv16x_flag_data_ready_get(ctx, &drdy);
-  } while (drdy.drdy_xl != 1U);
-  ret += lsm6dsv16x_acceleration_raw_get(ctx, xl_data);
-  if (ret != 0)
-  {
-    goto exit;
-  }
-
-  /* force sflp initialization */
-  ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_SENSOR_HUB_MEM_BANK);
-  if (ret != 0)
-  {
-    goto exit;
-  }
-  for (i = 0; i < 3U; i++)
-  {
-    j = 0;
-    data_tmp = (int32_t)xl_data[i];
-    data_tmp <<= xl_fs; // shift based on current fs
-    ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SENSOR_HUB_1 + 3U * i,
-                                &data_ptr[j++], 1);
-    ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SENSOR_HUB_2 + 3U * i,
-                                &data_ptr[j++], 1);
-    ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SENSOR_HUB_3 + 3U * i, &data_ptr[j],
-                                1);
-  }
-  for (i = 0; i < 3U; i++)
-  {
-    j = 0;
-    data_tmp = 0;
-    ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SENSOR_HUB_10 + 3U * i,
-                                &data_ptr[j++], 1);
-    ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SENSOR_HUB_11 + 3U * i,
-                                &data_ptr[j++], 1);
-    ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_SENSOR_HUB_12 + 3U * i, &data_ptr[j],
-                                1);
-  }
-  ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_MAIN_MEM_BANK);
-  if (ret != 0)
-  {
-    goto exit;
-  }
-
-  // wait end_op (and at least 30 us)
-  ctx->mdelay(1);
-  ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_EMBED_FUNC_MEM_BANK);
-  if (ret != 0)
-  {
-    goto exit;
-  }
-  do
-  {
-    ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_EMB_FUNC_EXEC_STATUS,
-                               (uint8_t *)&emb_func_sts, 1);
-  } while (emb_func_sts.emb_func_endop != 1U);
-  ret += lsm6dsv16x_mem_bank_set(ctx, LSM6DSV16X_MAIN_MEM_BANK);
-  if (ret != 0)
-  {
-    goto exit;
-  }
-
-  /* write gbias in embedded advanced features registers */
-  ret += lsm6dsv16x_ln_pg_write(ctx, LSM6DSV16X_SFLP_GAME_GBIASX_L,
-                                (uint8_t *)gbias_hf, 6);
-
-exit:
-  /* reload previous sensor configuration */
-  ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_CTRL1, conf_saved, 2);
-
-  // disable gbias setting
-  ctrl10.emb_func_debug = 0;
-  ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_CTRL10, (uint8_t *)&ctrl10, 1);
-
-  /* reload previous master configuration */
-  ret += lsm6dsv16x_sh_master_set(ctx, master_config);
-
-  return ret;
-}
-
-/**
-  * @brief  External sensor sensitivity value register for the Finite State Machine (r/w). This register corresponds to the conversion value of the external sensor. The register value is expressed as half-precision floating-point format: SEEEEEFFFFFFFFFF (S: 1 sign bit; E: 5 exponent bits; F: 10 fraction bits). Default value is 0x1624 (when using an external magnetometer this value corresponds to 0.0015 gauss/LSB).[set]
-  *
-  * @param  ctx      read / write interface definitions
-  * @param  val      External sensor sensitivity value register for the Finite State Machine (r/w). This register corresponds to the conversion value of the external sensor. The register value is expressed as half-precision floating-point format: SEEEEEFFFFFFFFFF (S: 1 sign bit; E: 5 exponent bits; F: 10 fraction bits). Default value is 0x1624 (when using an external magnetometer this value corresponds to 0.0015 gauss/LSB).
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
-  *
-  */
 int32_t lsm6dsv16x_fsm_ext_sens_sensitivity_set(const stmdev_ctx_t *ctx, uint16_t val)
 {
   uint8_t buff[2];
@@ -6954,14 +6552,6 @@ int32_t lsm6dsv16x_fsm_ext_sens_sensitivity_set(const stmdev_ctx_t *ctx, uint16_
   return ret;
 }
 
-/**
-  * @brief  External sensor sensitivity value register for the Finite State Machine (r/w). This register corresponds to the conversion value of the external sensor. The register value is expressed as half-precision floating-point format: SEEEEEFFFFFFFFFF (S: 1 sign bit; E: 5 exponent bits; F: 10 fraction bits). Default value is 0x1624 (when using an external magnetometer this value corresponds to 0.0015 gauss/LSB).[get]
-  *
-  * @param  ctx      read / write interface definitions
-  * @param  val      External sensor sensitivity value register for the Finite State Machine (r/w). This register corresponds to the conversion value of the external sensor. The register value is expressed as half-precision floating-point format: SEEEEEFFFFFFFFFF (S: 1 sign bit; E: 5 exponent bits; F: 10 fraction bits). Default value is 0x1624 (when using an external magnetometer this value corresponds to 0.0015 gauss/LSB).
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
-  *
-  */
 int32_t lsm6dsv16x_fsm_ext_sens_sensitivity_get(const stmdev_ctx_t *ctx,
                                                 uint16_t *val)
 {
@@ -6980,14 +6570,7 @@ int32_t lsm6dsv16x_fsm_ext_sens_sensitivity_get(const stmdev_ctx_t *ctx,
   return ret;
 }
 
-/**
-  * @brief  External sensor offsets (X,Y,Z). The values are expressed as half-precision floating-point format: SEEEEEFFFFFFFFFF (S: 1 sign bit; E: 5 exponent bits; F: 10 fraction bits).[set]
-  *
-  * @param  ctx      read / write interface definitions
-  * @param  val      External sensor offsets (X,Y,Z). The values are expressed as half-precision floating-point format: SEEEEEFFFFFFFFFF (S: 1 sign bit; E: 5 exponent bits; F: 10 fraction bits).
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
-  *
-  */
+
 int32_t lsm6dsv16x_fsm_ext_sens_offset_set(const stmdev_ctx_t *ctx,
                                            lsm6dsv16x_xl_fsm_ext_sens_offset_t val)
 {
@@ -7005,14 +6588,7 @@ int32_t lsm6dsv16x_fsm_ext_sens_offset_set(const stmdev_ctx_t *ctx,
   return ret;
 }
 
-/**
-  * @brief  External sensor offsets (X,Y,Z). The values are expressed as half-precision floating-point format: SEEEEEFFFFFFFFFF (S: 1 sign bit; E: 5 exponent bits; F: 10 fraction bits).[get]
-  *
-  * @param  ctx      read / write interface definitions
-  * @param  val      External sensor offsets (X,Y,Z). The values are expressed as half-precision floating-point format: SEEEEEFFFFFFFFFF (S: 1 sign bit; E: 5 exponent bits; F: 10 fraction bits).
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
-  *
-  */
+
 int32_t lsm6dsv16x_fsm_ext_sens_offset_get(const stmdev_ctx_t *ctx,
                                            lsm6dsv16x_xl_fsm_ext_sens_offset_t *val)
 {
@@ -7035,14 +6611,6 @@ int32_t lsm6dsv16x_fsm_ext_sens_offset_get(const stmdev_ctx_t *ctx,
   return ret;
 }
 
-/**
-  * @brief  External sensor transformation matrix. The value is expressed as half-precision floating-point format: SEEEEEFFFFFFFFFF (S: 1 sign bit; E: 5 exponent bits; F: 10 fraction bits).[set]
-  *
-  * @param  ctx      read / write interface definitions
-  * @param  val      External sensor transformation matrix. The value is expressed as half-precision floating-point format: SEEEEEFFFFFFFFFF (S: 1 sign bit; E: 5 exponent bits; F: 10 fraction bits).
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
-  *
-  */
 int32_t lsm6dsv16x_fsm_ext_sens_matrix_set(const stmdev_ctx_t *ctx,
                                            lsm6dsv16x_xl_fsm_ext_sens_matrix_t val)
 {
@@ -7066,14 +6634,7 @@ int32_t lsm6dsv16x_fsm_ext_sens_matrix_set(const stmdev_ctx_t *ctx,
   return ret;
 }
 
-/**
-  * @brief  External sensor transformation matrix. The value is expressed as half-precision floating-point format: SEEEEEFFFFFFFFFF (S: 1 sign bit; E: 5 exponent bits; F: 10 fraction bits).[get]
-  *
-  * @param  ctx      read / write interface definitions
-  * @param  val      External sensor transformation matrix. The value is expressed as half-precision floating-point format: SEEEEEFFFFFFFFFF (S: 1 sign bit; E: 5 exponent bits; F: 10 fraction bits).
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
-  *
-  */
+
 int32_t lsm6dsv16x_fsm_ext_sens_matrix_get(const stmdev_ctx_t *ctx,
                                            lsm6dsv16x_xl_fsm_ext_sens_matrix_t *val)
 {
@@ -7102,14 +6663,7 @@ int32_t lsm6dsv16x_fsm_ext_sens_matrix_get(const stmdev_ctx_t *ctx,
   return ret;
 }
 
-/**
-  * @brief  External sensor z-axis coordinates rotation.[set]
-  *
-  * @param  ctx      read / write interface definitions
-  * @param  val      Z_EQ_Y, Z_EQ_MIN_Y, Z_EQ_X, Z_EQ_MIN_X, Z_EQ_MIN_Z, Z_EQ_Z,
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
-  *
-  */
+
 int32_t lsm6dsv16x_fsm_ext_sens_z_orient_set(const stmdev_ctx_t *ctx,
                                              lsm6dsv16x_fsm_ext_sens_z_orient_t val)
 {
@@ -7127,14 +6681,18 @@ int32_t lsm6dsv16x_fsm_ext_sens_z_orient_set(const stmdev_ctx_t *ctx,
   return ret;
 }
 
-/**
-  * @brief  External sensor z-axis coordinates rotation.[get]
-  *
-  * @param  ctx      read / write interface definitions
-  * @param  val      Z_EQ_Y, Z_EQ_MIN_Y, Z_EQ_X, Z_EQ_MIN_X, Z_EQ_MIN_Z, Z_EQ_Z,
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
-  *
-  */
+  // enable gbias setting
+  ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_CTRL10, (uint8_t *)&ctrl10, 1);
+  if (ret == 0)
+  {
+    ctrl10.emb_func_debug = 1;
+    ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_CTRL10, (uint8_t *)&ctrl10, 1);
+  }
+  if (ret != 0)
+  {
+    goto exit;
+  }
+
 int32_t lsm6dsv16x_fsm_ext_sens_z_orient_get(const stmdev_ctx_t *ctx,
                                              lsm6dsv16x_fsm_ext_sens_z_orient_t *val)
 {
@@ -7181,14 +6739,7 @@ int32_t lsm6dsv16x_fsm_ext_sens_z_orient_get(const stmdev_ctx_t *ctx,
   return ret;
 }
 
-/**
-  * @brief  External sensor Y-axis coordinates rotation.[set]
-  *
-  * @param  ctx      read / write interface definitions
-  * @param  val      Y_EQ_Y, Y_EQ_MIN_Y, Y_EQ_X, Y_EQ_MIN_X, Y_EQ_MIN_Z, Y_EQ_Z,
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
-  *
-  */
+
 int32_t lsm6dsv16x_fsm_ext_sens_y_orient_set(const stmdev_ctx_t *ctx,
                                              lsm6dsv16x_fsm_ext_sens_y_orient_t val)
 {
@@ -7205,14 +6756,7 @@ int32_t lsm6dsv16x_fsm_ext_sens_y_orient_set(const stmdev_ctx_t *ctx,
   return ret;
 }
 
-/**
-  * @brief  External sensor Y-axis coordinates rotation.[get]
-  *
-  * @param  ctx      read / write interface definitions
-  * @param  val      Y_EQ_Y, Y_EQ_MIN_Y, Y_EQ_X, Y_EQ_MIN_X, Y_EQ_MIN_Z, Y_EQ_Z,
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
-  *
-  */
+
 int32_t lsm6dsv16x_fsm_ext_sens_y_orient_get(const stmdev_ctx_t *ctx,
                                              lsm6dsv16x_fsm_ext_sens_y_orient_t *val)
 {
@@ -7259,14 +6803,7 @@ int32_t lsm6dsv16x_fsm_ext_sens_y_orient_get(const stmdev_ctx_t *ctx,
   return ret;
 }
 
-/**
-  * @brief  External sensor X-axis coordinates rotation.[set]
-  *
-  * @param  ctx      read / write interface definitions
-  * @param  val      X_EQ_Y, X_EQ_MIN_Y, X_EQ_X, X_EQ_MIN_X, X_EQ_MIN_Z, X_EQ_Z,
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
-  *
-  */
+
 int32_t lsm6dsv16x_fsm_ext_sens_x_orient_set(const stmdev_ctx_t *ctx,
                                              lsm6dsv16x_fsm_ext_sens_x_orient_t val)
 {
@@ -7283,14 +6820,7 @@ int32_t lsm6dsv16x_fsm_ext_sens_x_orient_set(const stmdev_ctx_t *ctx,
   return ret;
 }
 
-/**
-  * @brief  External sensor X-axis coordinates rotation.[get]
-  *
-  * @param  ctx      read / write interface definitions
-  * @param  val      X_EQ_Y, X_EQ_MIN_Y, X_EQ_X, X_EQ_MIN_X, X_EQ_MIN_Z, X_EQ_Z,
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
-  *
-  */
+
 int32_t lsm6dsv16x_fsm_ext_sens_x_orient_get(const stmdev_ctx_t *ctx,
                                              lsm6dsv16x_fsm_ext_sens_x_orient_t *val)
 {
@@ -7337,14 +6867,7 @@ int32_t lsm6dsv16x_fsm_ext_sens_x_orient_get(const stmdev_ctx_t *ctx,
   return ret;
 }
 
-/**
-  * @brief  FSM long counter timeout. The long counter timeout value is an unsigned integer value (16-bit format). When the long counter value reached this value, the FSM generates an interrupt.[set]
-  *
-  * @param  ctx      read / write interface definitions
-  * @param  val      FSM long counter timeout. The long counter timeout value is an unsigned integer value (16-bit format). When the long counter value reached this value, the FSM generates an interrupt.
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
-  *
-  */
+
 int32_t lsm6dsv16x_fsm_long_cnt_timeout_set(const stmdev_ctx_t *ctx, uint16_t val)
 {
   uint8_t buff[2];
@@ -7358,14 +6881,6 @@ int32_t lsm6dsv16x_fsm_long_cnt_timeout_set(const stmdev_ctx_t *ctx, uint16_t va
   return ret;
 }
 
-/**
-  * @brief  FSM long counter timeout. The long counter timeout value is an unsigned integer value (16-bit format). When the long counter value reached this value, the FSM generates an interrupt.[get]
-  *
-  * @param  ctx      read / write interface definitions
-  * @param  val      FSM long counter timeout. The long counter timeout value is an unsigned integer value (16-bit format). When the long counter value reached this value, the FSM generates an interrupt.
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
-  *
-  */
 int32_t lsm6dsv16x_fsm_long_cnt_timeout_get(const stmdev_ctx_t *ctx, uint16_t *val)
 {
   uint8_t buff[2];
@@ -7384,14 +6899,7 @@ int32_t lsm6dsv16x_fsm_long_cnt_timeout_get(const stmdev_ctx_t *ctx, uint16_t *v
   return ret;
 }
 
-/**
-  * @brief  FSM number of programs.[set]
-  *
-  * @param  ctx      read / write interface definitions
-  * @param  val      FSM number of programs.
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
-  *
-  */
+
 int32_t lsm6dsv16x_fsm_number_of_programs_set(const stmdev_ctx_t *ctx, uint8_t val)
 {
   lsm6dsv16x_fsm_programs_t fsm_programs;
@@ -7409,14 +6917,7 @@ int32_t lsm6dsv16x_fsm_number_of_programs_set(const stmdev_ctx_t *ctx, uint8_t v
   return ret;
 }
 
-/**
-  * @brief  FSM number of programs.[get]
-  *
-  * @param  ctx      read / write interface definitions
-  * @param  val      FSM number of programs.
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
-  *
-  */
+
 int32_t lsm6dsv16x_fsm_number_of_programs_get(const stmdev_ctx_t *ctx, uint8_t *val)
 {
   lsm6dsv16x_fsm_programs_t fsm_programs;
