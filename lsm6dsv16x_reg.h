@@ -4290,7 +4290,7 @@ int32_t lsm6dsv16x_gy_data_rate_get(const stmdev_ctx_t *ctx,
 typedef enum
 {
   LSM6DSV16X_XL_HIGH_PERFORMANCE_MD   = 0x0,
-  LSM6DSV16X_XL_HIGH_ACCURACY_ODR_MD = 0x1,
+  LSM6DSV16X_XL_HIGH_ACCURACY_ODR_MD  = 0x1,
   LSM6DSV16X_XL_ODR_TRIGGERED_MD      = 0x3,
   LSM6DSV16X_XL_LOW_POWER_2_AVG_MD    = 0x4,
   LSM6DSV16X_XL_LOW_POWER_4_AVG_MD    = 0x5,
@@ -4320,7 +4320,7 @@ int32_t lsm6dsv16x_xl_mode_get(const stmdev_ctx_t *ctx, lsm6dsv16x_xl_mode_t *va
 typedef enum
 {
   LSM6DSV16X_GY_HIGH_PERFORMANCE_MD   = 0x0,
-  LSM6DSV16X_GY_HIGH_ACCURACY_ODR_MD = 0x1,
+  LSM6DSV16X_GY_HIGH_ACCURACY_ODR_MD  = 0x1,
   LSM6DSV16X_GY_SLEEP_MD              = 0x4,
   LSM6DSV16X_GY_LOW_POWER_MD          = 0x5,
 } lsm6dsv16x_gy_mode_t;
@@ -7204,9 +7204,9 @@ int32_t lsm6dsv16x_4d_mode_get(const stmdev_ctx_t *ctx, uint8_t *val);
 typedef enum
 {
   LSM6DSV16X_2400MOhm = 0x0,
-  LSM6DSV16X_730MOhm = 0x1,
-  LSM6DSV16X_300MOhm = 0x2,
-  LSM6DSV16X_255MOhm = 0x3,
+  LSM6DSV16X_730MOhm  = 0x1,
+  LSM6DSV16X_300MOhm  = 0x2,
+  LSM6DSV16X_255MOhm  = 0x3,
 } lsm6dsv16x_ah_qvar_zin_t;
 /**
   * @brief  Configures the equivalent input impedance of the AH_QVAR buffers.[set]
