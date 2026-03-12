@@ -30,7 +30,23 @@ This directory contains the LSM6DSV16X component drivers.
 # Update history
 
 ::: {.collapse}
-<input type="checkbox" id="collapse-section17" checked aria-hidden="true">
+<input type="checkbox" id="collapse-section18" checked aria-hidden="true">
+<label for="collapse-section18" aria-hidden="true">V6.1.0 / 12-Mar-2026</label>
+<div>
+
+## Main changes
+
+- Change switch cases to use hex values
+- Move doxygen from c to h
+- Fix fsm_ext_sens APIs
+- Split pin_int struct into pin_int1 and pin_int2
+- Re-order update history with most updated on top
+
+##
+
+</div>
+
+<input type="checkbox" id="collapse-section17" aria-hidden="true">
 <label for="collapse-section17" aria-hidden="true">V6.0.1 / 19-Nov-2025</label>
 <div>
 
@@ -41,6 +57,7 @@ This directory contains the LSM6DSV16X component drivers.
 ##
 
 </div>
+
 <input type="checkbox" id="collapse-section16" aria-hidden="true">
 <label for="collapse-section16" aria-hidden="true">V6.0.0 / 05-Nov-2025</label>
 <div>
