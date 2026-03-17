@@ -1658,7 +1658,7 @@ int32_t lsm6dsv16x_ois_gy_self_test_get(const stmdev_ctx_t *ctx,
 }
 
 int32_t lsm6dsv16x_pin_int1_route_set(const stmdev_ctx_t *ctx,
-                                      lsm6dsv16x_pin_int1_route_t *val)
+                                      lsm6dsv16x_pin_int_route_t *val)
 {
   lsm6dsv16x_int1_ctrl_t          int1_ctrl;
   lsm6dsv16x_md1_cfg_t            md1_cfg;
@@ -1701,13 +1701,13 @@ int32_t lsm6dsv16x_pin_int1_route_set(const stmdev_ctx_t *ctx,
 
 
 int32_t lsm6dsv16x_pin_int1_route_get(const stmdev_ctx_t *ctx,
-                                      lsm6dsv16x_pin_int1_route_t *val)
+                                      lsm6dsv16x_pin_int_route_t *val)
 {
   lsm6dsv16x_int1_ctrl_t          int1_ctrl;
   lsm6dsv16x_md1_cfg_t            md1_cfg;
   int32_t ret;
 
-  memset(val, 0x0, sizeof(lsm6dsv16x_pin_int1_route_t));
+  memset(val, 0x0, sizeof(lsm6dsv16x_pin_int_route_t));
 
   ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_INT1_CTRL, (uint8_t *)&int1_ctrl, 1);
   ret += lsm6dsv16x_read_reg(ctx, LSM6DSV16X_MD1_CFG, (uint8_t *)&md1_cfg, 1);
@@ -1737,7 +1737,7 @@ int32_t lsm6dsv16x_pin_int1_route_get(const stmdev_ctx_t *ctx,
 
 
 int32_t lsm6dsv16x_pin_int2_route_set(const stmdev_ctx_t *ctx,
-                                      lsm6dsv16x_pin_int2_route_t *val)
+                                      lsm6dsv16x_pin_int_route_t *val)
 {
   lsm6dsv16x_int2_ctrl_t          int2_ctrl;
   lsm6dsv16x_ctrl4_t              ctrl4;
@@ -1808,7 +1808,7 @@ int32_t lsm6dsv16x_pin_int2_route_set(const stmdev_ctx_t *ctx,
 
 
 int32_t lsm6dsv16x_pin_int2_route_get(const stmdev_ctx_t *ctx,
-                                      lsm6dsv16x_pin_int2_route_t *val)
+                                      lsm6dsv16x_pin_int_route_t *val)
 {
   lsm6dsv16x_int2_ctrl_t          int2_ctrl;
   lsm6dsv16x_ctrl4_t              ctrl4;
@@ -1816,7 +1816,7 @@ int32_t lsm6dsv16x_pin_int2_route_get(const stmdev_ctx_t *ctx,
   lsm6dsv16x_md2_cfg_t            md2_cfg;
   int32_t ret;
 
-  memset(val, 0x0, sizeof(lsm6dsv16x_pin_int2_route_t));
+  memset(val, 0x0, sizeof(lsm6dsv16x_pin_int_route_t));
 
   ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_INT2_CTRL, (uint8_t *)&int2_ctrl, 1);
   if (ret != 0)
