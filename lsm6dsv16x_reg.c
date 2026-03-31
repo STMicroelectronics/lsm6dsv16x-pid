@@ -3712,6 +3712,37 @@ int32_t lsm6dsv16x_fifo_batch_cnt_event_get(const stmdev_ctx_t *ctx,
   return ret;
 }
 
+int32_t lsm6dsv16x_fifo_xl_dual_channel_batch_set(const stmdev_ctx_t *ctx, uint8_t val)
+{
+  lsm6dsv16x_emb_func_cfg_t emb_func_cfg = {0};
+  int32_t ret = 0;
+
+  ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_EMB_FUNC_CFG, (uint8_t *)&emb_func_cfg, 1);
+  if (ret != 0)
+  {
+    return ret;
+  }
+
+  emb_func_cfg.xl_dualc_batch_from_if = val;
+  ret += lsm6dsv16x_write_reg(ctx, LSM6DSV16X_EMB_FUNC_CFG, (uint8_t *)&emb_func_cfg, 1);
+
+  return ret;
+}
+
+int32_t lsm6dsv16x_fifo_xl_dual_channel_batch_get(const stmdev_ctx_t *ctx, uint8_t *val)
+{
+  lsm6dsv16x_emb_func_cfg_t emb_func_cfg = {0};
+  int32_t ret = 0;
+
+  ret = lsm6dsv16x_read_reg(ctx, LSM6DSV16X_EMB_FUNC_CFG, (uint8_t *)&emb_func_cfg, 1);
+  if (ret == 0)
+  {
+    *val = emb_func_cfg.xl_dualc_batch_from_if;
+  }
+
+  return ret;
+}
+
 int32_t lsm6dsv16x_fifo_status_get(const stmdev_ctx_t *ctx,
                                    lsm6dsv16x_fifo_status_t *val)
 {
