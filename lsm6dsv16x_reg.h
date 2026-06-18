@@ -4078,6 +4078,15 @@ float_t lsm6dsv16x_from_lsb_to_mv(int16_t lsb);
 uint32_t lsm6dsv16x_from_f16_to_f32(uint16_t val);
 
 /**
+  * @brief  Convert from FP32 to FP16 numbers (e.g. quaternions)
+  *
+  * @param  val      single-precision (32-bit) float number
+  * @retval          half-precision (16-bit) float number
+  *
+  */
+uint16_t lsm6dsv16x_from_f32_to_f16(float_t val);
+
+/**
   * @}
   *
   */
