@@ -3161,13 +3161,13 @@ typedef struct
 typedef struct
 {
 #if DRV_BYTE_ORDER == DRV_LITTLE_ENDIAN
-  uint8_t not_used0            : 2;
+  uint8_t not_used0            : 1;
   uint8_t ext_format_sel       : 1;
-  uint8_t not_used1            : 5;
+  uint8_t not_used1            : 6;
 #elif DRV_BYTE_ORDER == DRV_BIG_ENDIAN
-  uint8_t not_used1            : 5;
+  uint8_t not_used1            : 6;
   uint8_t ext_format_sel       : 1;
-  uint8_t not_used0            : 2;
+  uint8_t not_used0            : 1;
 #endif /* DRV_BYTE_ORDER */
 } lsm6dsv16x_ext_format_t;
 
