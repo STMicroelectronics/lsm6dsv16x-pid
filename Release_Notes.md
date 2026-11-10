@@ -30,7 +30,30 @@ This directory contains the LSM6DSV16X component drivers.
 # Update history
 
 ::: {.collapse}
-<input type="checkbox" id="collapse-section20" checked aria-hidden="true">
+<input type="checkbox" id="collapse-section21" checked aria-hidden="true">
+<label for="collapse-section21" aria-hidden="true">V7.0.0 / 10-Nov-2026</label>
+<div>
+
+## Main changes
+
+- Fix MISRA issues
+
+  **Breaking change: API renaming**
+
+  API names have been updated to comply with **MISRA C:2012 Rule 5.1**, ensuring that
+  external identifiers are distinguishable within their first 31 characters.
+
+  This change breaks source and binary compatibility with previous driver versions.
+  Applications must update all references to the renamed APIs and be rebuilt against the
+  updated driver.
+
+  Function signatures and behavior remain unchanged; only the API names have changed.
+
+##
+
+</div>
+
+<input type="checkbox" id="collapse-section20" aria-hidden="true">
 <label for="collapse-section20" aria-hidden="true">V6.2.0 / 08-Oct-2026</label>
 <div>
 
